@@ -39,7 +39,13 @@ def analyze_video():
     frame_width = int(cap.get(3))
     frame_height = int(cap.get(4))
     out = cv2.VideoWriter(OUTPUT_VIDEO_RAW, cv2.VideoWriter_fourcc(*'mp4v'), 30, (frame_width, frame_height))
+    
+    # Crear una ventana para mostrar el video
+    cv2.namedWindow('Image Contours')
 
+    # Establecer la función de devolución de llamada del clic del ratón
+    cv2.setMouseCallback('Image Contours', click_event)
+    
     while True:
         success, img = cap.read()
 
@@ -109,8 +115,25 @@ def analyze_video():
     cap.release()
     cv2.destroyAllWindows()
 
+    
+   # Obtener las dimensiones máximas del video original
+    max_original_width = cap.get(cv2.CAP_PROP_FRAME_WIDTH)
+    max_original_height = cap.get(cv2.CAP_PROP_FRAME_HEIGHT)
+    print("Tamaño máximo del video original - X:", max_original_width, "Y:", max_original_height)
+
+    # Tamaño máximo del video después de la redimensión
+    max_resized_width = int(max_original_width * VIDEO_WINDOW_SIZE)
+    max_resized_height = int(max_original_height * VIDEO_WINDOW_SIZE)
+    print("Tamaño máximo del video redimensionado - X:", max_resized_width, "Y:", max_resized_height)
+
+    
     generate_h264_video(OUTPUT_VIDEO_RAW, OUTPUT_VIDEO_CODEC_H264)
 
+
+def click_event(event, x, y, flags, params):
+    if event == cv2.EVENT_LBUTTONDOWN:
+        print("Coordenadas del clic - X:", x, "Y:", y)
+        # Aquí puedes hacer lo que quieras con las coordenadas (x, y)
 
 if __name__ == "__main__":
     analyze_video()
