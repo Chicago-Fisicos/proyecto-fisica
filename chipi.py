@@ -34,7 +34,7 @@ def analyze_video():
 
     path_points = []
     path_data = []  # List to store X, Y, Time
-    start_time = time.time()  # Initial time of the video
+    start_time = 0
 
     # Video export configuration
     frame_width = int(cap.get(3))
@@ -61,7 +61,7 @@ def analyze_video():
                 contour_points = cnt['cnt']
                 x, y, _, _ = cv2.boundingRect(contour_points)
 
-                if y < 450 and x > 200:
+                if (y < 450 and x > 400) or (x>170 and y<350):
                     filtered_contours.append(contour_points)
 
                     # Calcular el centro del contorno
@@ -74,9 +74,12 @@ def analyze_video():
                         cv2.circle(img, current_center, 3, (255, 0, 0), -1)
                         path_points.append(current_center)
                         # Calcular el tiempo transcurrido desde el inicio del video
-                        elapsed_time = time.time() - start_time
+
+                        current_time_ms = cap.get(cv2.CAP_PROP_POS_MSEC)
+                        current_time_sec = current_time_ms / 1000
+                        #elapsed_time = time.time() - start_time
                         # Agregar datos de coordenadas (X, Y) y tiempo a la lista
-                        path_data.append((current_center[0], current_center[1], elapsed_time))
+                        path_data.append((current_center[0], current_center[1], current_time_sec))
 
         # Draw filtered contours on the original image
         if filtered_contours:
@@ -109,7 +112,7 @@ def analyze_video():
     cap.release()
     cv2.destroyAllWindows()
 
-    generate_h264_video(OUTPUT_VIDEO_RAW, OUTPUT_VIDEO_CODEC_H264)
+    #generate_h264_video(OUTPUT_VIDEO_RAW, OUTPUT_VIDEO_CODEC_H264)
 
 
 if __name__ == "__main__":
