@@ -1,17 +1,7 @@
-import time
 import cv2
 import cvzone
 from cvzone.ColorModule import ColorFinder
-from src.general.change_origin_parse_table import generar_archivo_nuevo
-
-# Define the initial color configuration for detecting color
-colour_config = {'hmin': 125, 'smin': 0, 'vmin': 0, 'hmax': 179, 'smax': 255, 'vmax': 255}
-
-COLOUR_BALL_TRAJECTORY = (0, 0, 255)  # red
-COLOUR_BALL_CONTOUR = (0, 255, 0)  # green
-
-# lower = faster, higher = slower
-VIDEO_SPEED = 1
+from src.general.change_origin_parse_table import change_origin_trackeo
 
 
 # Size of video window. Default = 1, but is very big
@@ -20,21 +10,36 @@ VIDEO_SPEED = 1
 VIDEO_WINDOW_SIZE = 0.7 # NO CAMBIARLO PORQUE MODIFICA EL TAMAÑO DEL EJE DE COORDENADAS
 
 TRACKEO = 'trackeo-original.csv'
+TRACKEO_NEW_ORIGIN = "trackeo-mod.csv"
+
 INPUT_VIDEO = "video-input.MOV"
 OUTPUT_VIDEO = "video-output.mp4"
 
 
-def analyze_video():
+######################### VARIABLES EDITABLES #########################
+colour_config = {'hmin': 125, 'smin': 0, 'vmin': 0, 'hmax': 179, 'smax': 255, 'vmax': 255}
+
+COLOUR_BALL_TRAJECTORY = (0, 0, 255)  # red
+COLOUR_BALL_CONTOUR = (0, 255, 0)  # green
+
+# ancho de la linea roja
+BALL_LINE_WIDTH = 2
+
+# lower = faster, higher = slower
+VIDEO_SPEED = 1
+#######################################################################
+
+
+def process_video():
 
     # Initialize the video capture object
     cap = cv2.VideoCapture(INPUT_VIDEO)
 
     # Initialize ColorFinder object for color detection
-    my_color_finder = ColorFinder(False)  # false becouse we don't need detect colour
+    my_color_finder = ColorFinder(False)  # false because we don't need to detect colour
 
     path_points = []
-    path_data = []  # List to store X, Y, Time
-    start_time = 0
+    trackeo_list = []  # List to store X, Y, Time
 
     # Video export configuration
     frame_width = int(cap.get(3))
@@ -50,7 +55,7 @@ def analyze_video():
             break
 
         img_color, mask = my_color_finder.update(img, colour_config)
-        # minArea y maxArea son el area min y max que debe tener un contorno para ser considerado valido
+        # minArea y maxArea son el área min y max que debe tener un contorno para ser considerado válido
         img_contours, contours = cvzone.findContours(img, mask, minArea=500, maxArea=5000)
 
         # List to store filtered contours
@@ -77,9 +82,8 @@ def analyze_video():
 
                         current_time_ms = cap.get(cv2.CAP_PROP_POS_MSEC)
                         current_time_sec = current_time_ms / 1000
-                        #elapsed_time = time.time() - start_time
                         # Agregar datos de coordenadas (X, Y) y tiempo a la lista
-                        path_data.append((current_center[0], current_center[1], current_time_sec))
+                        trackeo_list.append((current_center[0], current_center[1], current_time_sec))
 
         # Draw filtered contours on the original image
         if filtered_contours:
@@ -88,7 +92,7 @@ def analyze_video():
         # Draw the line that follows the path of the contour center in real-time
         if len(path_points) > 1:
             for i in range(1, len(path_points)):
-                cv2.line(img, path_points[i - 1], path_points[i], COLOUR_BALL_TRAJECTORY, 2)
+                cv2.line(img, path_points[i - 1], path_points[i], COLOUR_BALL_TRAJECTORY, BALL_LINE_WIDTH)
 
         # Write frame to output video
         out.write(img)
@@ -104,15 +108,13 @@ def analyze_video():
     # Save (X, Y, Time) to a CSV file
     with open(TRACKEO, 'w') as f:
         f.write("X,Y,Time\n")
-        for point in path_data:
+        for point in trackeo_list:
             x = round(point[0] * VIDEO_WINDOW_SIZE, 4)
             y = round(point[1] * VIDEO_WINDOW_SIZE, 4)
             time = round(point[2], 4)
             f.write(f"{x},{y},{time}\n")
 
-    INPUT_CSV = "../chipi/trackeo-original.csv"
-    OUTPUT_CSV = "../chipi/trackeo-mod.csv"
-    generar_archivo_nuevo(INPUT_CSV, OUTPUT_CSV)
+    change_origin_trackeo(TRACKEO, TRACKEO_NEW_ORIGIN)
 
     # Release video resources
     out.release()
@@ -120,6 +122,5 @@ def analyze_video():
     cv2.destroyAllWindows()
 
 
-
 if __name__ == "__main__":
-    analyze_video()
+    process_video()
