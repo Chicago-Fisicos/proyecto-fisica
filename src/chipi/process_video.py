@@ -38,13 +38,29 @@ def process_video():
     # Initialize ColorFinder object for color detection
     my_color_finder = ColorFinder(False)  # false because we don't need to detect colour
 
-    path_points = []
+    center_points = []
     trackeo_list = []  # List to store X, Y, Time
 
     # Video export configuration
     frame_width = int(cap.get(3))
     frame_height = int(cap.get(4))
     out = cv2.VideoWriter(OUTPUT_VIDEO, cv2.VideoWriter_fourcc(*'mp4v'), 30, (frame_width, frame_height))
+
+    # Crear una ventana para mostrar el video
+    cv2.namedWindow('Image Contours')
+
+    # Establecer la función de devolución de llamada del clic del ratón
+    cv2.setMouseCallback('Image Contours', click_event)
+
+    # Obtener las dimensiones máximas del video original
+    max_original_width = cap.get(cv2.CAP_PROP_FRAME_WIDTH)
+    max_original_height = cap.get(cv2.CAP_PROP_FRAME_HEIGHT)
+    print("Tamaño máximo del video original - X:", max_original_width, "Y:", max_original_height)
+
+    # Tamaño máximo del video después de la redimensión
+    max_resized_width = int(max_original_width * VIDEO_WINDOW_SIZE)
+    max_resized_height = int(max_original_height * VIDEO_WINDOW_SIZE)
+    print("Tamaño máximo del video redimensionado - X:", max_resized_width, "Y:", max_resized_height)
 
     while True:
         success, img = cap.read()
@@ -77,24 +93,23 @@ def process_video():
                         current_center = (center_x, center_y)
                         # Dibujar el punto en el centro del contorno
                         cv2.circle(img, current_center, 3, (255, 0, 0), -1)
-                        path_points.append(current_center)
-                        # Calcular el tiempo transcurrido desde el inicio del video
+                        center_points.append(current_center)
 
+                        # Agregar datos de coordenadas (X, Y) y tiempo a la lista
                         current_time_ms = cap.get(cv2.CAP_PROP_POS_MSEC)
                         current_time_sec = current_time_ms / 1000
-                        # Agregar datos de coordenadas (X, Y) y tiempo a la lista
                         trackeo_list.append((current_center[0], current_center[1], current_time_sec))
 
-        # Draw filtered contours on the original image
+        # Dibuja contorno de la pelota
         if filtered_contours:
             cv2.drawContours(img, filtered_contours, -1, COLOUR_BALL_CONTOUR, 2)
 
         # Draw the line that follows the path of the contour center in real-time
-        if len(path_points) > 1:
-            for i in range(1, len(path_points)):
-                cv2.line(img, path_points[i - 1], path_points[i], COLOUR_BALL_TRAJECTORY, BALL_LINE_WIDTH)
+        if len(center_points) > 1:
+            for i in range(1, len(center_points)):
+                cv2.line(img, center_points[i - 1], center_points[i], COLOUR_BALL_TRAJECTORY, BALL_LINE_WIDTH)
 
-        # Write frame to output video
+        # Guarda video nuevo
         out.write(img)
 
         # Resize and display the image
@@ -122,5 +137,7 @@ def process_video():
     cv2.destroyAllWindows()
 
 
-if __name__ == "__main__":
-    process_video()
+def click_event(event, x, y, flags, params):
+    if event == cv2.EVENT_LBUTTONDOWN:
+        print("Coordenadas del click - X:", x, "Y:", y)
+
