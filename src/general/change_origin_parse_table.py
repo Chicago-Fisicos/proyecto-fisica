@@ -35,6 +35,10 @@ def change_origen(x,y,origen):
     y = float(y)
     new_x = round(mul_x * (x - origen[0]), 4)
     new_y = round(mul_y * (y - origen[1]), 4)
+    if new_x == -0.0:
+        new_x = str(new_x).replace('-0.0', '0.0')
+    if new_y == -0.0:
+        new_y = str(new_y).replace('-0.0', '0.0')
     return (new_x, new_y)
 
 
