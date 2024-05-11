@@ -8,9 +8,9 @@ from cvzone.ColorModule import ColorFinder
 # video_window_size. Library default = 1, but is very big
     # We can use 0.55 for notebooks
     # or 0.7 for big screen
-video_window_size=0.7
 
-def detect_colour(input_video, video_speed=20):
+
+def detect_colour(input_video, video_speed=20, video_window_size=0.7):
     # Initialize the video capture object
     cap = cv2.VideoCapture(input_video)
     colour_config = ""
