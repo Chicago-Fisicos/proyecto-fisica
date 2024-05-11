@@ -7,7 +7,7 @@ from src.general.change_origin_parse_table import change_origin_trackeo
 # Size of video window. Default = 1, but is very big
 # 0.55 for notebook
 # 0.7 for big screen
-VIDEO_WINDOW_SIZE = 0.7 # NO CAMBIARLO PORQUE MODIFICA EL TAMAÑO DEL EJE DE COORDENADAS
+VIDEO_WINDOW_SIZE = 0.7  # NO CAMBIARLO PORQUE MODIFICA EL TAMAÑO DEL EJE DE COORDENADAS
 
 TRACKEO = 'trackeo-original.csv'
 TRACKEO_NEW_ORIGIN = "trackeo-mod.csv"
@@ -19,8 +19,8 @@ OUTPUT_VIDEO = "video-output.mp4"
 ######################### VARIABLES EDITABLES #########################
 colour_config = {'hmin': 145, 'smin': 0, 'vmin': 0, 'hmax': 179, 'smax': 255, 'vmax': 255}
 
-COLOUR_BALL_TRAJECTORY = (0, 0, 255) # red
-COLOUR_BALL_CONTOUR = (0, 255, 0) # green
+COLOUR_BALL_TRAJECTORY = (0, 0, 255)  # red
+COLOUR_BALL_CONTOUR = (0, 255, 0)  # green
 
 # ancho de la linea roja
 BALL_LINE_WIDTH = 2
@@ -80,7 +80,7 @@ def process_video():
         if contours is not None:
             for cnt in contours:
                 contour_points = cnt['cnt']
-                x, y, _, _ = cv2.boundingRect(contour_points) # for each contour get X,Y
+                x, y, _, _ = cv2.boundingRect(contour_points)  # for each contour get X,Y
 
                 # mitad de la pantalla en adelante la Y debe ser menor que 500
                 # o a la izquierda de la pantalla la Y debe ser menor que 320 (para recortar aro)
@@ -105,7 +105,7 @@ def process_video():
 
         # Dibuja contorno de la pelota
         if filtered_contours:
-            #cv2.drawContours(img, filtered_contours, -1, COLOUR_BALL_CONTOUR, 2)
+            # cv2.drawContours(img, filtered_contours, -1, COLOUR_BALL_CONTOUR, 2)
             for contour_points in filtered_contours:
                 x, y, w, h = cv2.boundingRect(contour_points)
                 fix_value = 10
@@ -117,6 +117,41 @@ def process_video():
         if len(center_points) > 1:
             for i in range(1, len(center_points)):
                 cv2.line(img, center_points[i - 1], center_points[i], COLOUR_BALL_TRAJECTORY, BALL_LINE_WIDTH)
+
+        # Dibuja los ejes cartesianos
+
+        end_line_eje_x = 1600
+        end_line_eje_y = 800
+        # origin_x=875/VIDEO_WINDOW_SIZE(0.7)=1250
+        origin_x = 1250
+        # origin_x=350/VIDEO_WINDOW_SIZE(0.7)=500
+        origin_y = 500
+
+        # grosor en pixeles de la linea
+        thikness = 2
+
+        # Longitud de la punta de la flecha (en relación con la longitud total de la línea)
+        # permite controlar el tamaño de la punta de la flecha
+        tip_length_factor_eje_x = 0.02
+        tip_length_factor_eje_y = 0.04
+
+        # Eje x
+        cv2.arrowedLine(img, (0, origin_y), (end_line_eje_x, origin_y), (0, 0, 0), thikness,
+                        tipLength=tip_length_factor_eje_x)
+        # Eje y
+        cv2.arrowedLine(img, (origin_x, 0), (origin_x, end_line_eje_y), (0, 0, 0), thikness,
+                        tipLength=tip_length_factor_eje_y)
+
+        # Eje x con flecha apuntando hacia la izquierda
+        cv2.arrowedLine(img, (end_line_eje_x, origin_y), (0, origin_y), (0, 0, 0), thikness,
+                        tipLength=tip_length_factor_eje_x)
+        # Eje y con flecha apuntando hacia arriba
+        cv2.arrowedLine(img, (origin_x, end_line_eje_y), (origin_x, 0), (0, 0, 0), thikness,
+                        tipLength=tip_length_factor_eje_y)
+
+        # Agrega nombres a los ejes
+        cv2.putText(img, "eje x", (1300, origin_y + 20), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 0), thikness)
+        cv2.putText(img, "eje y", (origin_x - 65, 0 + 600), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 0), thikness)
 
         # Guarda video nuevo
         out.write(img)
