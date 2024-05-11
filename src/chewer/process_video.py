@@ -26,7 +26,7 @@ COLOUR_BALL_CONTOUR = (0, 255, 0) # green
 BALL_LINE_WIDTH = 2
 
 # lower = faster, higher = slower
-VIDEO_SPEED = 1
+VIDEO_SPEED = 70
 #######################################################################
 
 
@@ -105,7 +105,13 @@ def process_video():
 
         # Dibuja contorno de la pelota
         if filtered_contours:
-            cv2.drawContours(img, filtered_contours, -1, COLOUR_BALL_CONTOUR, 2)
+            #cv2.drawContours(img, filtered_contours, -1, COLOUR_BALL_CONTOUR, 2)
+            for contour_points in filtered_contours:
+                x, y, w, h = cv2.boundingRect(contour_points)
+                fix_value = 10
+                y = y - fix_value
+                h = h + fix_value
+                cv2.rectangle(img, (x, y), (x + w, y + h), COLOUR_BALL_CONTOUR, 2)
 
         # Draw the line that follows the path of the contour center in real-time
         if len(center_points) > 1:
@@ -147,3 +153,5 @@ def click_event(event, x, y, flags, params):
         print("Coordenadas del click - X:", x, "Y:", y)
 
 
+if __name__ == "__main__":
+    process_video()
