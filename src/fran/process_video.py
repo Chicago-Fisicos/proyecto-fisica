@@ -6,16 +6,16 @@ from src.general.change_origin_parse_table import change_origin_trackeo
 # Size of video window. Default = 1, but is very big
 # 0.55 for notebook
 # 0.7 for big screen
-VIDEO_WINDOW_SIZE = 0.7  # NO CAMBIARLO PORQUE MODIFICA EL TAMAÑO DEL EJE DE COORDENADAS
+VIDEO_WINDOW_SIZE = 0.7# NO CAMBIARLO PORQUE MODIFICA EL TAMAÑO DEL EJE DE COORDENADAS
 
 TRACKEO = 'trackeo-original.csv'
 TRACKEO_NEW_ORIGIN = "trackeo-mod.csv"
 
-INPUT_VIDEO = "video-input.MOV"
+INPUT_VIDEO = "video-input.mp4"
 OUTPUT_VIDEO = "video-output.mp4"
 
 ######################### VARIABLES EDITABLES #########################
-colour_config = {'hmin': 124, 'smin': 35, 'vmin': 34, 'hmax': 179, 'smax': 255, 'vmax': 193}
+colour_config = {'hmin': 118, 'smin': 0, 'vmin': 0, 'hmax': 179, 'smax': 255, 'vmax': 255}
 
 COLOUR_BALL_TRAJECTORY = (0, 0, 255)  # red
 COLOUR_BALL_CONTOUR = (0, 255, 0)  # green
@@ -83,7 +83,7 @@ def process_video():
 
                 # mitad de la pantalla en adelante la Y debe ser menor que 500
                 # o a la izquierda de la pantalla la Y debe ser menor que 320 (para recortar aro)
-                if (x > 600 and y < 500) or (x > 300 and y < 320):
+                if (y < 395 and x > 395) or (x>100 and y<270):
                     filtered_contours.append(contour_points)
 
                     # Calcular el centro del contorno
