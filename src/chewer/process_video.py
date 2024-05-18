@@ -2,7 +2,7 @@ import cv2
 import cvzone
 from cvzone.ColorModule import ColorFinder
 from src.general.change_origin_parse_table import change_origin_trackeo
-
+from src.general.draw_cartesian_axes import draw_cartesian_axes
 
 # Size of video window. Default = 1, but is very big
 # 0.55 for notebook
@@ -118,40 +118,18 @@ def process_video():
             for i in range(1, len(center_points)):
                 cv2.line(img, center_points[i - 1], center_points[i], COLOUR_BALL_TRAJECTORY, BALL_LINE_WIDTH)
 
-        # Dibuja los ejes cartesianos
 
-        end_line_eje_x = 1600
-        end_line_eje_y = 800
+        # Draw cartesian axes with these values
         # origin_x=875/VIDEO_WINDOW_SIZE(0.7)=1250
         origin_x = 1250
-        # origin_x=350/VIDEO_WINDOW_SIZE(0.7)=500
+        # origin_y=350/VIDEO_WINDOW_SIZE(0.7)=500
         origin_y = 500
+        end_line_eje_x = 1600
+        end_line_eje_y = 800
 
-        # grosor en pixeles de la linea
-        thikness = 2
+        # Draw cartesian axes
+        draw_cartesian_axes(img,origin_x,origin_y,end_line_eje_x,end_line_eje_y)
 
-        # Longitud de la punta de la flecha (en relación con la longitud total de la línea)
-        # permite controlar el tamaño de la punta de la flecha
-        tip_length_factor_eje_x = 0.02
-        tip_length_factor_eje_y = 0.04
-
-        # Eje x
-        cv2.arrowedLine(img, (0, origin_y), (end_line_eje_x, origin_y), (0, 0, 0), thikness,
-                        tipLength=tip_length_factor_eje_x)
-        # Eje y
-        cv2.arrowedLine(img, (origin_x, 0), (origin_x, end_line_eje_y), (0, 0, 0), thikness,
-                        tipLength=tip_length_factor_eje_y)
-
-        # Eje x con flecha apuntando hacia la izquierda
-        cv2.arrowedLine(img, (end_line_eje_x, origin_y), (0, origin_y), (0, 0, 0), thikness,
-                        tipLength=tip_length_factor_eje_x)
-        # Eje y con flecha apuntando hacia arriba
-        cv2.arrowedLine(img, (origin_x, end_line_eje_y), (origin_x, 0), (0, 0, 0), thikness,
-                        tipLength=tip_length_factor_eje_y)
-
-        # Agrega nombres a los ejes
-        cv2.putText(img, "eje x", (1300, origin_y + 20), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 0), thikness)
-        cv2.putText(img, "eje y", (origin_x - 65, 0 + 600), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 0), thikness)
 
         # Guarda video nuevo
         out.write(img)
