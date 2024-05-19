@@ -15,7 +15,7 @@ INPUT_VIDEO = "video-input-720-sat.mp4"
 OUTPUT_VIDEO = "video-output.mp4"
 
 ######################### VARIABLES EDITABLES #########################
-colour_config = {'hmin': 118, 'smin': 0, 'vmin': 0, 'hmax': 179, 'smax': 255, 'vmax': 255}
+colour_config = {'hmin': 114, 'smin': 0, 'vmin': 0, 'hmax': 179, 'smax': 255, 'vmax': 255}
 
 COLOUR_BALL_TRAJECTORY = (0, 0, 255)  # red
 COLOUR_BALL_CONTOUR = (0, 255, 0)  # green
