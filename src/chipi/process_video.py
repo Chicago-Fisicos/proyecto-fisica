@@ -126,7 +126,7 @@ def process_video():
         draw_velocity_vectors(img, trackeo_list)
 
         # Draw acceleration vectors
-        # draw_acceleration_vectors(img, trackeo_list)
+        #draw_acceleration_vectors(img, trackeo_list)
 
         # Guarda video nuevo
         out.write(img)
