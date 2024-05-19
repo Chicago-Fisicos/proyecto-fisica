@@ -2,7 +2,9 @@ import cv2
 import cvzone
 from cvzone.ColorModule import ColorFinder
 from src.general.change_origin_parse_table import change_origin_trackeo
+from src.general.draw_acceleration_vectors import draw_acceleration_vectors
 from src.general.draw_cartesian_axes import draw_cartesian_axes
+from src.general.draw_velocity_vectors import draw_velocity_vectors
 
 # Size of video window. Default = 1, but is very big
 # 0.55 for notebook
@@ -119,6 +121,12 @@ def process_video():
 
         # Draw cartesian axes
         draw_cartesian_axes(img, origin_x, origin_y, end_line_eje_x, end_line_eje_y)
+
+        # Draw velocity vectors
+        draw_velocity_vectors(img, trackeo_list)
+
+        # Draw acceleration vectors
+        # draw_acceleration_vectors(img, trackeo_list)
 
         # Guarda video nuevo
         out.write(img)
