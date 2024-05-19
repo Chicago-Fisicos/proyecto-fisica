@@ -11,11 +11,11 @@ VIDEO_WINDOW_SIZE = 0.7# NO CAMBIARLO PORQUE MODIFICA EL TAMAÑO DEL EJE DE COOR
 TRACKEO = 'trackeo-original.csv'
 TRACKEO_NEW_ORIGIN = "trackeo-mod.csv"
 
-INPUT_VIDEO = "rugby-chipi-input.mp4"
+INPUT_VIDEO = "video-input.mp4"
 OUTPUT_VIDEO = "video-output.mp4"
 
 ######################### VARIABLES EDITABLES #########################
-colour_config = {'hmin': 0, 'smin': 0, 'vmin': 180, 'hmax': 179, 'smax': 8, 'vmax': 255}
+colour_config = {'hmin': 74, 'smin': 0, 'vmin': 0, 'hmax': 179, 'smax': 124, 'vmax': 191}
 
 COLOUR_BALL_TRAJECTORY = (0, 0, 255)  # red
 COLOUR_BALL_CONTOUR = (0, 255, 0)  # green
@@ -131,7 +131,7 @@ def process_video():
             time = round(point[2], 4)
             f.write(f"{x},{y},{time}\n")
 
-    change_origin_trackeo(TRACKEO, TRACKEO_NEW_ORIGIN)
+    #change_origin_trackeo(TRACKEO, TRACKEO_NEW_ORIGIN)
 
     # Release video resources
     out.release()
