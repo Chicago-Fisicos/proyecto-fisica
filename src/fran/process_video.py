@@ -141,6 +141,6 @@ def process_video():
 
 def click_event(event, x, y, flags, params):
     if event == cv2.EVENT_LBUTTONDOWN:
-        print("Coordenadas del click - X:", x, "Y:", y)
+        print("Coordenadas del click - X:", x/VIDEO_WINDOW_SIZE, "Y:", y/VIDEO_WINDOW_SIZE)
 
 
