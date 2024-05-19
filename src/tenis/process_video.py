@@ -9,12 +9,12 @@ from src.general.draw_velocity_vectors import draw_velocity_vectors
 # Size of video window. Default = 1, but is very big
 # 0.55 for notebook
 # 0.7 for big screen
-VIDEO_WINDOW_SIZE = 0.35 # NO CAMBIARLO PORQUE MODIFICA EL TAMAÑO DEL EJE DE COORDENADAS
+VIDEO_WINDOW_SIZE = 0.7 # NO CAMBIARLO PORQUE MODIFICA EL TAMAÑO DEL EJE DE COORDENADAS
 
 TRACKEO = 'trackeo-original.csv'
 TRACKEO_NEW_ORIGIN = "trackeo-mod.csv"
 
-INPUT_VIDEO = "video-input-4k.MOV"
+INPUT_VIDEO = "output.mp4"
 OUTPUT_VIDEO = "video-output.mp4"
 
 
@@ -25,7 +25,7 @@ COLOUR_BALL_TRAJECTORY = (0, 0, 255)  # red
 COLOUR_BALL_CONTOUR = (0, 255, 0)  # green
 
 # ancho de la linea roja
-BALL_LINE_WIDTH = 3
+BALL_LINE_WIDTH = 2
 
 # lower = faster, higher = slower
 VIDEO_SPEED = 1
@@ -75,7 +75,7 @@ def process_video():
 
         img_color, mask = my_color_finder.update(img, colour_config)
         # minArea y maxArea son el área min y max que debe tener un contorno para ser considerado válido
-        img_contours, contours = cvzone.findContours(img, mask, minArea=300, maxArea=3000)
+        img_contours, contours = cvzone.findContours(img, mask, minArea=50, maxArea=3000)
 
         # List to store filtered contours
         filtered_contours = []
@@ -85,8 +85,7 @@ def process_video():
                 contour_points = cnt['cnt']
                 x, y, _, _ = cv2.boundingRect(contour_points)
 
-                #if(50<y<522) and (530<x<1530):
-                if(190<y<1000) and (982<x<2900):
+                if(80<y<437) and (530<x<1430):
                     filtered_contours.append(contour_points)
 
                     # Calcular el centro del contorno
@@ -122,7 +121,7 @@ def process_video():
         end_line_eje_y = 719
 
         # Draw cartesian axes
-        draw_cartesian_axes(img, origin_x, origin_y, end_line_eje_x, end_line_eje_y)
+        #draw_cartesian_axes(img, origin_x, origin_y, end_line_eje_x, end_line_eje_y)
 
         # Draw velocity vectors
         #draw_velocity_vectors(img, trackeo_list)
