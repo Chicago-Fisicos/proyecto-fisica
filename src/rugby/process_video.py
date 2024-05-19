@@ -24,7 +24,7 @@ COLOUR_BALL_CONTOUR = (0, 255, 0)  # green
 BALL_LINE_WIDTH = 2
 
 # lower = faster, higher = slower
-VIDEO_SPEED = 1
+VIDEO_SPEED = 20
 
 
 #######################################################################
@@ -83,7 +83,9 @@ def process_video():
 
                 # mitad de la pantalla en adelante la Y debe ser menor que 500
                 # o a la izquierda de la pantalla la Y debe ser menor que 320 (para recortar aro)
-                if (y < 540 and x > 360) or (x>100 and y<200):
+                #if (y < 540 and x > 360) or (x>100 and y<200):
+                #if (50 < y < 343) and (x>500):
+                if ((68 < y < 531) and (x>700)) or (y<307 and 498<x<700):
                     filtered_contours.append(contour_points)
 
                     # Calcular el centro del contorno
@@ -131,7 +133,7 @@ def process_video():
             time = round(point[2], 4)
             f.write(f"{x},{y},{time}\n")
 
-    #change_origin_trackeo(TRACKEO, TRACKEO_NEW_ORIGIN)
+    change_origin_trackeo(TRACKEO, TRACKEO_NEW_ORIGIN)
 
     # Release video resources
     out.release()
@@ -141,6 +143,8 @@ def process_video():
 
 def click_event(event, x, y, flags, params):
     if event == cv2.EVENT_LBUTTONDOWN:
-        print("Coordenadas del click - X:", x, "Y:", y)
+        print("Coordenadas del click - X:", x/VIDEO_WINDOW_SIZE, "Y:", y/VIDEO_WINDOW_SIZE)
 
 
+if __name__ == "__main__":
+    process_video()
