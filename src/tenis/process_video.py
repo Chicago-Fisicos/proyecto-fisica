@@ -14,7 +14,7 @@ VIDEO_WINDOW_SIZE = 0.7 # NO CAMBIARLO PORQUE MODIFICA EL TAMAÑO DEL EJE DE COO
 TRACKEO = 'trackeo-original.csv'
 TRACKEO_NEW_ORIGIN = "trackeo-mod.csv"
 
-INPUT_VIDEO = "output.mp4"
+INPUT_VIDEO = "video-input-1080p-60fps.mp4"
 OUTPUT_VIDEO = "video-output.mp4"
 
 
@@ -43,10 +43,12 @@ def process_video():
     center_points = []
     trackeo_list = []  # List to store X, Y, Time
 
+    fps = get_fps(cap)
+
     # Video export configuration
     frame_width = int(cap.get(3))
     frame_height = int(cap.get(4))
-    out = cv2.VideoWriter(OUTPUT_VIDEO, cv2.VideoWriter_fourcc(*'mp4v'), 30, (frame_width, frame_height))
+    out = cv2.VideoWriter(OUTPUT_VIDEO, cv2.VideoWriter_fourcc(*'mp4v'), fps, (frame_width, frame_height))
 
     # Crear una ventana para mostrar el video
     cv2.namedWindow('Image Contours')
@@ -85,6 +87,7 @@ def process_video():
                 contour_points = cnt['cnt']
                 x, y, _, _ = cv2.boundingRect(contour_points)
 
+                # X,Y son coordenadas del video original, no del achicado
                 if(80<y<437) and (530<x<1430):
                     filtered_contours.append(contour_points)
 
@@ -158,8 +161,18 @@ def process_video():
 
 
 def click_event(event, x, y, flags, params):
+    # ESTO MUESTRA EL X,Y DEL VIDEO ORIGINAL!!! SIN REDIMENSION
     if event == cv2.EVENT_LBUTTONDOWN:
+        # dividimos porque el video fue redimensionado
+        # es decir, fue multiplicado por VIDEO_WINDOW_SIZE, por lo tanto se achicó la resolucion
+        # esto se hizo para que entre el video en la pantalla.
+        # al dividir, estamos obteniendo el pixel original
         print("Coordenadas del click - X:", x/VIDEO_WINDOW_SIZE, "Y:", y/VIDEO_WINDOW_SIZE)
+
+def get_fps(cap):
+    fps = cap.get(cv2.CAP_PROP_FPS)
+    print("FPS del video:", fps)
+    return fps
 
 
 if __name__ == "__main__":
