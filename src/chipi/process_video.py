@@ -120,13 +120,13 @@ def process_video():
         end_line_eje_y = 800
 
         # Draw cartesian axes
-        draw_cartesian_axes(img, origin_x, origin_y, end_line_eje_x, end_line_eje_y)
+        #draw_cartesian_axes(img, origin_x, origin_y, end_line_eje_x, end_line_eje_y)
 
         # Draw velocity vectors
         #draw_velocity_vectors(img, trackeo_list)
 
         # Draw acceleration vectors
-        draw_acceleration_vectors(img, trackeo_list)
+        #draw_acceleration_vectors(img, trackeo_list)
 
         # Guarda video nuevo
         out.write(img)
