@@ -43,26 +43,18 @@ def process_video():
     center_points = []
     trackeo_list = []  # List to store X, Y, Time
 
-    # Video export configuration
-    frame_width = int(cap.get(3))
-    frame_height = int(cap.get(4))
-    out = cv2.VideoWriter(OUTPUT_VIDEO, cv2.VideoWriter_fourcc(*'mp4v'), 30, (frame_width, frame_height))
+    # Get video info
+    fps = get_fps(cap)
+    frame_width, frame_height = get_frame_dimensions(cap)
+    out = cv2.VideoWriter(OUTPUT_VIDEO, cv2.VideoWriter_fourcc(*'mp4v'), fps, (int(frame_width), int(frame_height)))
+    print("Tamaño del video original - X:", frame_width, "Y:", frame_height)
+    print("Tamaño del video redimensionado - X:", frame_width * VIDEO_WINDOW_SIZE, "Y:", frame_height * VIDEO_WINDOW_SIZE)
 
     # Crear una ventana para mostrar el video
     cv2.namedWindow('Image Contours')
 
     # Establecer la función de devolución de llamada del clic del ratón
     cv2.setMouseCallback('Image Contours', click_event)
-
-    # Obtener las dimensiones máximas del video original
-    max_original_width = cap.get(cv2.CAP_PROP_FRAME_WIDTH)
-    max_original_height = cap.get(cv2.CAP_PROP_FRAME_HEIGHT)
-    print("Tamaño máximo del video original - X:", max_original_width, "Y:", max_original_height)
-
-    # Tamaño máximo del video después de la redimensión
-    max_resized_width = int(max_original_width * VIDEO_WINDOW_SIZE)
-    max_resized_height = int(max_original_height * VIDEO_WINDOW_SIZE)
-    print("Tamaño máximo del video redimensionado - X:", max_resized_width, "Y:", max_resized_height)
 
     while True:
         success, img = cap.read()
@@ -156,7 +148,27 @@ def process_video():
     cv2.destroyAllWindows()
 
 
-def click_event(event, x, y, flags, params):
-    if event == cv2.EVENT_LBUTTONDOWN:
-        print("Coordenadas del click - X:", x, "Y:", y)
 
+
+def click_event(event, x, y, flags, params):
+    # ESTO MUESTRA EL X,Y DEL VIDEO ORIGINAL!!! SIN REDIMENSION
+    if event == cv2.EVENT_LBUTTONDOWN:
+        # hacemos una division en x,y porque el video fue redimensionado
+        # es decir, fue multiplicado por VIDEO_WINDOW_SIZE, por lo tanto se achicó la resolucion
+        # esto se hizo para que entre el video en la pantalla.
+        # al dividir, estamos obteniendo el pixel original
+        print("Coordenadas del click - X:", x/VIDEO_WINDOW_SIZE, "Y:", y/VIDEO_WINDOW_SIZE)
+
+def get_fps(cap):
+    fps = cap.get(cv2.CAP_PROP_FPS)
+    print("FPS del video:", fps)
+    return fps
+
+def get_frame_dimensions(cap):
+    frame_width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
+    frame_height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
+    return frame_width, frame_height
+
+
+if __name__ == "__main__":
+    process_video()
