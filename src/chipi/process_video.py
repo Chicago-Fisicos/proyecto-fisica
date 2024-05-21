@@ -9,7 +9,7 @@ from src.general.draw_velocity_vectors import draw_velocity_vectors
 # Size of video window. Default = 1, but is very big
 # 0.55 for notebook
 # 0.7 for big screen
-VIDEO_WINDOW_SIZE = 1 # NO CAMBIARLO PORQUE MODIFICA EL TAMAÑO DEL EJE DE COORDENADAS
+VIDEO_WINDOW_SIZE = 0.7 # NO CAMBIARLO PORQUE MODIFICA EL TAMAÑO DEL EJE DE COORDENADAS
 
 TRACKEO = 'trackeo-original.csv'
 TRACKEO_NEW_ORIGIN = "trackeo-mod.csv"
@@ -135,8 +135,8 @@ def process_video():
     with open(TRACKEO, 'w') as f:
         f.write("X,Y,Time\n")
         for point in trackeo_list:
-            x = round(point[0] * VIDEO_WINDOW_SIZE, 4)
-            y = round(point[1] * VIDEO_WINDOW_SIZE, 4)
+            x = round(point[0], 4)
+            y = round(point[1], 4)
             time = round(point[2], 4)
             f.write(f"{x},{y},{time}\n")
 
