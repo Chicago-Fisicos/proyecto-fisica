@@ -14,7 +14,7 @@ VIDEO_WINDOW_SIZE = 0.7 # NO CAMBIARLO PORQUE MODIFICA EL TAMAÑO DEL EJE DE COO
 TRACKEO = 'trackeo-original.csv'
 TRACKEO_NEW_ORIGIN = "trackeo-mod.csv"
 
-INPUT_VIDEO = "video-input-1080p-60fps.mp4"
+INPUT_VIDEO = "video-input.mp4"
 OUTPUT_VIDEO = "video-output.mp4"
 
 
