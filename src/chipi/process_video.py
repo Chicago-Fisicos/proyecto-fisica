@@ -104,23 +104,18 @@ def process_video():
             for i in range(1, len(center_points)):
                 cv2.line(img, center_points[i - 1], center_points[i], COLOUR_BALL_TRAJECTORY, BALL_LINE_WIDTH)
 
+        if len(trackeo_list) > 1:
+            origin_x = (trackeo_list[0][0])
+            origin_y = (trackeo_list[0][1])
 
-        # Draw cartesian axes with these values
-        # origin_x=853/VIDEO_WINDOW_SIZE(0.7)=1219
-        origin_x = 1219
-        # origin_y=311/VIDEO_WINDOW_SIZE(0.7)=444
-        origin_y = 444
-        end_line_eje_x = 1600
-        end_line_eje_y = 800
+            # Draw cartesian axes
+            draw_cartesian_axes(img, origin_x, origin_y)
 
-        # Draw cartesian axes
-        draw_cartesian_axes(img, origin_x, origin_y, end_line_eje_x, end_line_eje_y)
+            # Draw velocity vectors
+            draw_velocity_vectors(img, trackeo_list)
 
-        # Draw velocity vectors
-        draw_velocity_vectors(img, trackeo_list)
-
-        # Draw acceleration vectors
-        draw_acceleration_vectors(img, trackeo_list)
+            # Draw acceleration vectors
+            draw_acceleration_vectors(img, trackeo_list)
 
         # Guarda video nuevo
         out.write(img)

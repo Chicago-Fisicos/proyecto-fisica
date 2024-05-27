@@ -2,7 +2,9 @@ import cv2
 import cvzone
 from cvzone.ColorModule import ColorFinder
 from src.general.change_origin_parse_table import change_origin_trackeo
+from src.general.draw_acceleration_vectors import draw_acceleration_vectors
 from src.general.draw_cartesian_axes import draw_cartesian_axes
+from src.general.draw_velocity_vectors import draw_velocity_vectors
 
 # Size of video window. Default = 1, but is very big
 # 0.55 for notebook
@@ -118,18 +120,13 @@ def process_video():
             for i in range(1, len(center_points)):
                 cv2.line(img, center_points[i - 1], center_points[i], COLOUR_BALL_TRAJECTORY, BALL_LINE_WIDTH)
 
+        if len(trackeo_list) > 1 :
+            # Draw cartesian axes with these values
+            origin_x = (trackeo_list[0][0])
+            origin_y = (trackeo_list[0][1])
 
-        # Draw cartesian axes with these values
-        # origin_x=875/VIDEO_WINDOW_SIZE(0.7)=1250
-        origin_x = 1250
-        # origin_y=350/VIDEO_WINDOW_SIZE(0.7)=500
-        origin_y = 500
-        end_line_eje_x = 1600
-        end_line_eje_y = 800
-
-        # Draw cartesian axes
-        draw_cartesian_axes(img,origin_x,origin_y,end_line_eje_x,end_line_eje_y)
-
+            # Draw cartesian axes
+            draw_cartesian_axes(img,origin_x,origin_y)
 
         # Guarda video nuevo
         out.write(img)

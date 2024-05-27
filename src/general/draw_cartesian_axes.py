@@ -1,9 +1,13 @@
 import cv2
 
 
-def draw_cartesian_axes(img, origin_x, origin_y, end_line_eje_x, end_line_eje_y):
+def draw_cartesian_axes(img, origin_x, origin_y):
     # grosor en pixeles de la linea
     thickness = 2
+
+    #Longitud de las lineas de los ejes
+    end_line_eje_x = origin_x + 350
+    end_line_eje_y = origin_y + 350
 
     # permite controlar el tamaño de la punta de la flecha
     tip_length_factor_eje_x = 0.02
