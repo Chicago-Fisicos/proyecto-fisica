@@ -37,5 +37,5 @@ def draw_acceleration_vectors(img, trackeo_list):
 
         # Al sumar la posición inicial x con la componente vx, obtenemos la coordenada x del punto final del vector., lo mismo para y
         # se multiplica con acceleration_scale para que sea vea mejor en el video
-        end_point = (int(trackeo_list[i][0] + ax_normalized * acceleration_length), int(trackeo_list[i][1] + ay_normalized * acceleration_length) )
+        end_point = (int(trackeo_list[i][0] + ax_normalized * -acceleration_length), int(trackeo_list[i][1] + ay_normalized * -acceleration_length) )
         cv2.arrowedLine(img, start_point, end_point, colour_acceleration_vector, thickness)

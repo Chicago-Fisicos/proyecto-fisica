@@ -1,3 +1,6 @@
+from src.general.change_origin_parse_table import change_origen_single
+
+
 def calculate_velocity_and_acceleration(trackeo_list):
     velocities = []
     accelerations = []
@@ -5,15 +8,27 @@ def calculate_velocity_and_acceleration(trackeo_list):
     for i in range(1, len(trackeo_list)):
 
         # Para cada par de puntos consecutivos, se extraen las coordenadas (x, y, t)
-        x1, y1, t1 = trackeo_list[i - 1]
-        x2, y2, t2 = trackeo_list[i]
+
+        origen_x1 = float(trackeo_list[i - 1][0])
+        origen_y1 = float(trackeo_list[i - 1][1])
+        origen1 = (origen_x1, origen_y1)
+
+        #se modifican los valores para que coincidan con el archivo trackeo_mod
+        x1, y1 = change_origen_single(trackeo_list[i - 1][0], trackeo_list[i - 1][1], origen1)
+        x2, y2 = change_origen_single(trackeo_list[i][0], trackeo_list[i][1], origen1)
+
         # Se calcula el dt entre los dos puntos.
+        t1 = trackeo_list[i-1][2]
+        t2 = trackeo_list[i][2]
+
         dt = t2 - t1
+
         # Si es cero, se omite la iteración para evitar la división por cero.
         if dt == 0:
             continue
 
-        # Se calculan las velocidades en x y en y, se alamacenan los valores
+        # Se calculan las velocidades en x y en y, se almacenan los valores
+
         vx = (x2 - x1) / dt
         vy = (y2 - y1) / dt
         velocities.append((vx, vy, t2))

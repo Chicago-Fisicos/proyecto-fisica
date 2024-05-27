@@ -43,6 +43,7 @@ def process_video():
     center_points = []
     trackeo_list = []  # List to store X, Y, Time
 
+
     # Get video info
     fps = get_fps(cap)
     frame_width, frame_height = get_frame_dimensions(cap)
@@ -102,6 +103,7 @@ def process_video():
         if len(center_points) > 1:
             for i in range(1, len(center_points)):
                 cv2.line(img, center_points[i - 1], center_points[i], COLOUR_BALL_TRAJECTORY, BALL_LINE_WIDTH)
+
 
         # Draw cartesian axes with these values
         # origin_x=853/VIDEO_WINDOW_SIZE(0.7)=1219

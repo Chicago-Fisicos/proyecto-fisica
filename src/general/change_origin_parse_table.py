@@ -18,6 +18,7 @@ def change_origin_trackeo(input, output):
     origen_y = float(datos[0][1])
     origen = (origen_x, origen_y)
 
+    lista_trackeo_mod = []
     nuevos_datos = []
     for x, y, tiempo in datos:
         new_x, new_y = change_origen_single(x, y, origen)
@@ -28,6 +29,8 @@ def change_origin_trackeo(input, output):
         writer.writerow(["X", "Y", "Time"])
         writer.writerows(nuevos_datos)
 
+
+
 def change_origen_single(x, y, origen):
     x = float(x)
     y = float(y)
@@ -36,10 +39,10 @@ def change_origen_single(x, y, origen):
 
     # fix -0.0 number
     if new_x == -0.0:
-        new_x = str(new_x).replace('-0.0', '0.0')
+        new_x = 0.0
     if new_y == -0.0:
-        new_y = str(new_y).replace('-0.0', '0.0')
-    return (new_x, new_y)
+        new_y = 0.0
+    return new_x, new_y
 
 
 if __name__ == "__main__":
