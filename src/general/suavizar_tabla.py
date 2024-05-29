@@ -67,9 +67,9 @@ def graficar(csv_original, csv_suavizado):
     plt.title('Gráfica de X e Y para ambos archivos')
     plt.legend()
 
+    # Guardar la gráfica como una imagen
+    plt.savefig("grafica.png")
+
     # Mostrar la gráfica
     plt.show()
 
-if __name__ == "__main__":
-    suavizar(CSV_ORIGINAL)
-    graficar(CSV_ORIGINAL, CSV_SUAVIZADO)

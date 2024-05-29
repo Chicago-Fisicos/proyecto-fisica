@@ -5,7 +5,7 @@ from src.general.change_origin_parse_table import change_origin_trackeo
 from src.general.draw_acceleration_vectors import draw_acceleration_vectors
 from src.general.draw_cartesian_axes import draw_cartesian_axes
 from src.general.draw_velocity_vectors import draw_velocity_vectors
-from src.general.suavizar_tabla import suavizar
+from src.general.suavizar_tabla import suavizar, graficar
 
 # Size of video window. Default = 1, but is very big
 # 0.55 for notebook
@@ -141,14 +141,12 @@ def process_video():
 
     change_origin_trackeo(TRACKEO, TRACKEO_NEW_ORIGIN)
     suavizar(TRACKEO_NEW_ORIGIN, TRACKEO_SUAVIZADO)
-
+    graficar(TRACKEO_NEW_ORIGIN, TRACKEO_SUAVIZADO)
 
     # Release video resources
     out.release()
     cap.release()
     cv2.destroyAllWindows()
-
-
 
 
 def click_event(event, x, y, flags, params):
