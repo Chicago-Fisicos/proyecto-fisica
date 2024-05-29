@@ -17,17 +17,13 @@ def suavizar(csv_original, csv_suavizado):
     Y = df['Y'].values
     Time = df['Time'].values
 
-    # Ajustar la función a los datos, omitiendo la primera fila
-    params_x, _ = curve_fit(func, Time[1:], X[1:])
-    params_y, _ = curve_fit(func, Time[1:], Y[1:])
+    # Ajustar la función a los datos
+    params_x, _ = curve_fit(func, Time, X)
+    params_y, _ = curve_fit(func, Time, Y)
 
     # Generar valores suavizados usando la función ajustada
     X_smooth = func(Time, *params_x)
     Y_smooth = func(Time, *params_y)
-
-    # Mantener la primera fila como (0, 0)
-#    X_smooth[0] = 0
-#    Y_smooth[0] = 0
 
     # Redondear los números a cuatro dígitos decimales
     X_smooth = np.round(X_smooth, 4)
@@ -44,7 +40,6 @@ def suavizar(csv_original, csv_suavizado):
     df_smooth.to_csv(csv_suavizado, index=False)
 
 
-
 def graficar(csv_original, csv_suavizado):
     # Leer los archivos CSV
     df1 = pd.read_csv(csv_original)
@@ -57,7 +52,7 @@ def graficar(csv_original, csv_suavizado):
     plt.plot(df2['X'], df2['Y'], label='Suavizado', color='red', linestyle='-', linewidth=10)
 
     # Graficar los datos del primer archivo
-    plt.plot(df1['X'], df1['Y'], label='Original', color='blue', linestyle='-', linewidth=4)
+    plt.plot(df1['X'], df1['Y'], label='Original', color='blue', linestyle='-', linewidth=3)
 
     # Etiquetas y título
     plt.xlabel('X')
