@@ -20,7 +20,7 @@ INPUT_VIDEO = "video-input.mp4"
 OUTPUT_VIDEO = "video-output.mp4"
 
 ######################### VARIABLES EDITABLES #########################
-colour_config = {'hmin': 114, 'smin': 0, 'vmin': 0, 'hmax': 179, 'smax': 255, 'vmax': 255}
+colour_config = {'hmin': 120, 'smin': 0, 'vmin': 0, 'hmax': 179, 'smax': 255, 'vmax': 255}
 
 COLOUR_BALL_TRAJECTORY = (0, 0, 255)  # red
 COLOUR_BALL_CONTOUR = (0, 255, 0)  # green
@@ -88,7 +88,8 @@ def process_video():
 
                 # mitad de la pantalla en adelante la Y debe ser menor que 500
                 # o a la izquierda de la pantalla la Y debe ser menor que 320 (para recortar aro)
-                if (y<650 and 754<x<1412) or (148<x<754 and y<455):
+                if (y < 580 and x < 1370) and (x > 200 and y > 50):
+                #if (y < 650 and x < 1412) or (x < 754 and y < 455):
                     filtered_contours.append(contour_points)
 
                     # Calcular el centro del contorno
