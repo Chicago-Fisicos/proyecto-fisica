@@ -2,7 +2,6 @@ import numpy as np
 import pandas as pd
 from scipy.optimize import curve_fit
 import matplotlib.pyplot as plt
-from scipy.signal import savgol_filter
 
 
 # Definir una función de segundo grado para el ajuste
@@ -24,12 +23,9 @@ def suavizar(csv_original, csv_suavizado):
     # Ajustar la función cuadrática a los datos de Y
     params_y, _ = curve_fit(func, np.arange(len(Y)), Y)
 
-    # Aplicar el filtro de Savitzky-Golay a los datos de X e Y
-    window_length = 5  # Longitud de la ventana, debe ser impar
-    polyorder = 2  # Orden del polinomio, usualmente 2 o 3
-
-    X_suavizado = savgol_filter(X, window_length, polyorder)
-    Y_suavizado = savgol_filter(Y, window_length, polyorder)
+    # Generar los valores suavizados para X e Y utilizando las funciones ajustadas
+    X_suavizado = func(np.arange(len(X)), *params_x)
+    Y_suavizado = func(np.arange(len(Y)), *params_y)
 
     # Redondear los números a cuatro dígitos decimales
     X_suavizado = np.round(X_suavizado, 4)
