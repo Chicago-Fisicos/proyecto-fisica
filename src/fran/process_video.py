@@ -5,6 +5,7 @@ from src.general.change_origin_parse_table import change_origin_trackeo
 from src.general.draw_acceleration_vectors import draw_acceleration_vectors
 from src.general.draw_cartesian_axes import draw_cartesian_axes
 from src.general.draw_velocity_vectors import draw_velocity_vectors
+from src.general.suavizar_tabla import suavizar, graficar
 
 # Size of video window. Default = 1, but is very big
 # 0.55 for notebook
@@ -13,8 +14,9 @@ VIDEO_WINDOW_SIZE = 0.7# NO CAMBIARLO PORQUE MODIFICA EL TAMAÑO DEL EJE DE COOR
 
 TRACKEO = 'trackeo-original.csv'
 TRACKEO_NEW_ORIGIN = "trackeo-mod.csv"
+TRACKEO_SUAVIZADO = "trackeo-suavizado.csv"
 
-INPUT_VIDEO = "video-input-720-sat.mp4"
+INPUT_VIDEO = "video-input.mp4"
 OUTPUT_VIDEO = "video-output.mp4"
 
 ######################### VARIABLES EDITABLES #########################
@@ -86,7 +88,7 @@ def process_video():
 
                 # mitad de la pantalla en adelante la Y debe ser menor que 500
                 # o a la izquierda de la pantalla la Y debe ser menor que 320 (para recortar aro)
-                if (y < 395 and x > 395) or (x>100 and y<270):
+                if (y<650 and 754<x<1412) or (148<x<754 and y<455):
                     filtered_contours.append(contour_points)
 
                     # Calcular el centro del contorno
@@ -122,13 +124,13 @@ def process_video():
         end_line_eje_y = 800
 
         # Draw cartesian axes
-        draw_cartesian_axes(img, origin_x, origin_y, end_line_eje_x, end_line_eje_y)
+       # draw_cartesian_axes(img, origin_x, origin_y, end_line_eje_x, end_line_eje_y)
 
         # Draw velocity vectors
-        draw_velocity_vectors(img, trackeo_list)
+        #draw_velocity_vectors(img, trackeo_list)
 
         # Draw acceleration vectors
-        draw_acceleration_vectors(img, trackeo_list)
+        #draw_acceleration_vectors(img, trackeo_list)
 
         # Guarda video nuevo
         out.write(img)
@@ -146,12 +148,14 @@ def process_video():
     with open(TRACKEO, 'w') as f:
         f.write("X,Y,Time\n")
         for point in trackeo_list:
-            x = round(point[0] * VIDEO_WINDOW_SIZE, 4)
-            y = round(point[1] * VIDEO_WINDOW_SIZE, 4)
+            x = round(point[0], 4)
+            y = round(point[1], 4)
             time = round(point[2], 4)
             f.write(f"{x},{y},{time}\n")
 
     change_origin_trackeo(TRACKEO, TRACKEO_NEW_ORIGIN)
+    suavizar(TRACKEO_NEW_ORIGIN, TRACKEO_SUAVIZADO)
+    graficar(TRACKEO_NEW_ORIGIN, TRACKEO_SUAVIZADO)
 
     # Release video resources
     out.release()
@@ -164,3 +168,5 @@ def click_event(event, x, y, flags, params):
         print("Coordenadas del click - X:", x/VIDEO_WINDOW_SIZE, "Y:", y/VIDEO_WINDOW_SIZE)
 
 
+if __name__ == "__main__":
+    process_video()
