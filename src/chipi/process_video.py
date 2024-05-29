@@ -147,7 +147,7 @@ def process_video():
     suavizar(TRACKEO_ORIGINAL, TRACKEO_SUAVIZADO)
     # Cambio el origen del trackeo suavizado
     change_origin_trackeo(TRACKEO_SUAVIZADO, TRACKEO_SUAVIZADO_NUEVO_ORIGEN)
-    # Grafico el trackeo original y el suavizado (ambos con el nuevo origen
+    # Grafico el trackeo original y el suavizado (ambos con el nuevo origen)
     graficar(TRACKEO_ORIGINAL_NUEVO_ORIGEN, TRACKEO_SUAVIZADO_NUEVO_ORIGEN)
 
     # Release video resources
