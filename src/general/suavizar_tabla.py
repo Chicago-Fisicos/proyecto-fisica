@@ -2,6 +2,7 @@ import numpy as np
 import pandas as pd
 from scipy.optimize import curve_fit
 import matplotlib.pyplot as plt
+from scipy.signal import savgol_filter
 
 
 # Definir una función de segundo grado para el ajuste
@@ -17,27 +18,32 @@ def suavizar(csv_original, csv_suavizado):
     Y = df['Y'].values
     Time = df['Time'].values
 
-    # Ajustar la función a los datos
-    params_x, _ = curve_fit(func, Time, X)
-    params_y, _ = curve_fit(func, Time, Y)
+    # Ajustar la función cuadrática a los datos de X
+    params_x, _ = curve_fit(func, np.arange(len(X)), X)
 
-    # Generar valores suavizados usando la función ajustada
-    X_smooth = func(Time, *params_x)
-    Y_smooth = func(Time, *params_y)
+    # Ajustar la función cuadrática a los datos de Y
+    params_y, _ = curve_fit(func, np.arange(len(Y)), Y)
+
+    # Aplicar el filtro de Savitzky-Golay a los datos de X e Y
+    window_length = 5  # Longitud de la ventana, debe ser impar
+    polyorder = 2  # Orden del polinomio, usualmente 2 o 3
+
+    X_suavizado = savgol_filter(X, window_length, polyorder)
+    Y_suavizado = savgol_filter(Y, window_length, polyorder)
 
     # Redondear los números a cuatro dígitos decimales
-    X_smooth = np.round(X_smooth, 4)
-    Y_smooth = np.round(Y_smooth, 4)
+    X_suavizado = np.round(X_suavizado, 4)
+    Y_suavizado = np.round(Y_suavizado, 4)
 
     # Crear una nueva tabla con los valores suavizados
-    df_smooth = pd.DataFrame({
-        'X': X_smooth,
-        'Y': Y_smooth,
+    df_suavizado = pd.DataFrame({
+        'X': X_suavizado,
+        'Y': Y_suavizado,
         'Time': Time
     })
 
     # Guardar la nueva tabla en un archivo CSV
-    df_smooth.to_csv(csv_suavizado, index=False)
+    df_suavizado.to_csv(csv_suavizado, index=False)
 
 
 def graficar(csv_original, csv_suavizado):
