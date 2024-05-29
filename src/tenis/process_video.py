@@ -5,14 +5,17 @@ from src.general.change_origin_parse_table import change_origin_trackeo
 from src.general.draw_acceleration_vectors import draw_acceleration_vectors
 from src.general.draw_cartesian_axes import draw_cartesian_axes
 from src.general.draw_velocity_vectors import draw_velocity_vectors
+from src.general.suavizar_tabla import suavizar, graficar
 
 # Size of video window. Default = 1, but is very big
 # 0.55 for notebook
 # 0.7 for big screen
 VIDEO_WINDOW_SIZE = 0.7 # NO CAMBIARLO PORQUE MODIFICA EL TAMAÑO DEL EJE DE COORDENADAS
 
-TRACKEO = 'trackeo-original.csv'
-TRACKEO_NEW_ORIGIN = "trackeo-mod.csv"
+TRACKEO_ORIGINAL = 'trackeo-original.csv'
+TRACKEO_ORIGINAL_NUEVO_ORIGEN = 'trackeo-original-nuevo-origen.csv'
+TRACKEO_SUAVIZADO = "trackeo-suavizado.csv"
+TRACKEO_SUAVIZADO_NUEVO_ORIGEN = "trackeo-suavizado-nuevo-origen.csv"
 
 INPUT_VIDEO = "video-input.mp4"
 OUTPUT_VIDEO = "video-output.mp4"
@@ -133,15 +136,23 @@ def process_video():
             break
 
     # Save (X, Y, Time) to a CSV file
-    with open(TRACKEO, 'w') as f:
+    with open(TRACKEO_ORIGINAL, 'w') as f:
         f.write("X,Y,Time\n")
         for point in trackeo_list:
-            x = round(point[0] * VIDEO_WINDOW_SIZE, 4)
-            y = round(point[1] * VIDEO_WINDOW_SIZE, 4)
+            x = round(point[0], 4)
+            y = round(point[1], 4)
             time = round(point[2], 4)
             f.write(f"{x},{y},{time}\n")
 
-    change_origin_trackeo(TRACKEO, TRACKEO_NEW_ORIGIN)
+    # Cambio el origen del trackeo original
+    change_origin_trackeo(TRACKEO_ORIGINAL, TRACKEO_ORIGINAL_NUEVO_ORIGEN)
+    # Suavizo el trackeo original
+    suavizar(TRACKEO_ORIGINAL, TRACKEO_SUAVIZADO)
+    # Cambio el origen del trackeo suavizado
+    change_origin_trackeo(TRACKEO_SUAVIZADO, TRACKEO_SUAVIZADO_NUEVO_ORIGEN)
+    # Grafico el trackeo original y el suavizado (ambos con el nuevo origen
+    graficar(TRACKEO_ORIGINAL_NUEVO_ORIGEN, TRACKEO_SUAVIZADO_NUEVO_ORIGEN)
+
 
     # Release video resources
     out.release()

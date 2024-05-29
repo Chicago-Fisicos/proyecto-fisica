@@ -26,8 +26,8 @@ def suavizar(csv_original, csv_suavizado):
     Y_smooth = func(Time, *params_y)
 
     # Mantener la primera fila como (0, 0)
-    X_smooth[0] = 0
-    Y_smooth[0] = 0
+#    X_smooth[0] = 0
+#    Y_smooth[0] = 0
 
     # Redondear los números a cuatro dígitos decimales
     X_smooth = np.round(X_smooth, 4)
@@ -43,8 +43,6 @@ def suavizar(csv_original, csv_suavizado):
     # Guardar la nueva tabla en un archivo CSV
     df_smooth.to_csv(csv_suavizado, index=False)
 
-    # Mostrar la nueva tabla
-    print(df_smooth)
 
 
 def graficar(csv_original, csv_suavizado):
@@ -59,7 +57,7 @@ def graficar(csv_original, csv_suavizado):
     plt.plot(df2['X'], df2['Y'], label='Suavizado', color='red', linestyle='-', linewidth=10)
 
     # Graficar los datos del primer archivo
-    plt.plot(df1['X'], df1['Y'], label='Original', color='blue', linestyle='-', linewidth=5)
+    plt.plot(df1['X'], df1['Y'], label='Original', color='blue', linestyle='-', linewidth=4)
 
     # Etiquetas y título
     plt.xlabel('X')
