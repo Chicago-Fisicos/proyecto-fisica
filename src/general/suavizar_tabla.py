@@ -4,16 +4,13 @@ from scipy.optimize import curve_fit
 import matplotlib.pyplot as plt
 
 
-CSV_ORIGINAL = "../chipi/trackeo-mod.csv"
-CSV_SUAVIZADO = "../chipi/trackeo-mod-suavizado.csv"
-
 # Definir una función de segundo grado para el ajuste
 def func(x, a, b, c):
     return a * x**2 + b * x + c
 
-def suavizar(file=CSV_ORIGINAL):
+def suavizar(csv_original, csv_suavizado):
     # Leer el archivo CSV
-    df = pd.read_csv(file)
+    df = pd.read_csv(csv_original)
 
     # Extraer columnas X, Y y Time
     X = df['X'].values
@@ -44,7 +41,7 @@ def suavizar(file=CSV_ORIGINAL):
     })
 
     # Guardar la nueva tabla en un archivo CSV
-    df_smooth.to_csv(CSV_SUAVIZADO, index=False)
+    df_smooth.to_csv(csv_suavizado, index=False)
 
     # Mostrar la nueva tabla
     print(df_smooth)

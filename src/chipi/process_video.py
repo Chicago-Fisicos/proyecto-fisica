@@ -5,6 +5,7 @@ from src.general.change_origin_parse_table import change_origin_trackeo
 from src.general.draw_acceleration_vectors import draw_acceleration_vectors
 from src.general.draw_cartesian_axes import draw_cartesian_axes
 from src.general.draw_velocity_vectors import draw_velocity_vectors
+from src.general.suavizar_tabla import suavizar
 
 # Size of video window. Default = 1, but is very big
 # 0.55 for notebook
@@ -13,6 +14,7 @@ VIDEO_WINDOW_SIZE = 0.7 # NO CAMBIARLO PORQUE MODIFICA EL TAMAÑO DEL EJE DE COO
 
 TRACKEO = 'trackeo-original.csv'
 TRACKEO_NEW_ORIGIN = "trackeo-mod.csv"
+TRACKEO_SUAVIZADO = "trackeo-suavizado.csv"
 
 INPUT_VIDEO = "video-input.MOV"
 OUTPUT_VIDEO = "video-output.mp4"
@@ -138,6 +140,8 @@ def process_video():
             f.write(f"{x},{y},{time}\n")
 
     change_origin_trackeo(TRACKEO, TRACKEO_NEW_ORIGIN)
+    suavizar(TRACKEO_NEW_ORIGIN, TRACKEO_SUAVIZADO)
+
 
     # Release video resources
     out.release()
