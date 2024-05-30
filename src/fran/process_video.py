@@ -5,20 +5,26 @@ from src.general.change_origin_parse_table import change_origin_trackeo
 from src.general.draw_acceleration_vectors import draw_acceleration_vectors
 from src.general.draw_cartesian_axes import draw_cartesian_axes
 from src.general.draw_velocity_vectors import draw_velocity_vectors
-from src.general.suavizar_tabla import suavizar, graficar
+from src.general.suavizar_tabla import suavizar_curve_fit, suavizar_savitzky, graficar
 
 # Size of video window. Default = 1, but is very big
 # 0.55 for notebook
 # 0.7 for big screen
 VIDEO_WINDOW_SIZE = 0.7 # NO CAMBIARLO PORQUE MODIFICA EL TAMAÑO DEL EJE DE COORDENADAS
 
-TRACKEO_ORIGINAL = 'trackeo-original.csv'
-TRACKEO_ORIGINAL_NUEVO_ORIGEN = 'trackeo-original-nuevo-origen.csv'
-TRACKEO_SUAVIZADO = "trackeo-suavizado.csv"
-TRACKEO_SUAVIZADO_NUEVO_ORIGEN = "trackeo-suavizado-nuevo-origen.csv"
+TRACKEO_ORIGINAL = 'tablas/trackeo-original.csv'
+TRACKEO_ORIGINAL_NUEVO_ORIGEN = 'tablas/trackeo-original-nuevo-origen.csv'
 
-INPUT_VIDEO = "video-input.mp4"
-OUTPUT_VIDEO = "video-output.mp4"
+TRACKEO_SUAVIZADO_CURVE_FIT = "tablas/trackeo-suavizado-curve-fit.csv"
+TRACKEO_SUAVIZADO_CURVE_FIT_NUEVO_ORIGEN = "tablas/trackeo-suavizado-curve-fit-nuevo-origen.csv"
+NOMBRE_GRAFICO_CURVE_FIT = "graficos/curve_fit.png"
+
+TRACKEO_SUAVIZADO_SAVITZKY = "tablas/trackeo-suavizado-savitzky.csv"
+TRACKEO_SUAVIZADO_SAVITZKY_NUEVO_ORIGEN = "tablas/trackeo-suavizado-savitzky-nuevo-origen.csv"
+NOMBRE_GRAFICO_SAVITZKY = "graficos/savitzky.png"
+
+INPUT_VIDEO = "videos/input.mp4"
+OUTPUT_VIDEO = "videos/output.mp4"
 
 ######################### VARIABLES EDITABLES #########################
 colour_config = {'hmin': 120, 'smin': 0, 'vmin': 0, 'hmax': 179, 'smax': 255, 'vmax': 255}
@@ -155,14 +161,21 @@ def process_video():
             time = round(point[2], 4)
             f.write(f"{x},{y},{time}\n")
 
+
     # Cambio el origen del trackeo original
     change_origin_trackeo(TRACKEO_ORIGINAL, TRACKEO_ORIGINAL_NUEVO_ORIGEN)
+
     # Suavizo el trackeo original
-    suavizar(TRACKEO_ORIGINAL, TRACKEO_SUAVIZADO)
-    # Cambio el origen del trackeo suavizado
-    change_origin_trackeo(TRACKEO_SUAVIZADO, TRACKEO_SUAVIZADO_NUEVO_ORIGEN)
+    suavizar_curve_fit(TRACKEO_ORIGINAL, TRACKEO_SUAVIZADO_CURVE_FIT)
+    suavizar_savitzky(TRACKEO_ORIGINAL, TRACKEO_SUAVIZADO_SAVITZKY)
+
+    # Cambio el origen de los trackeos suavizados
+    change_origin_trackeo(TRACKEO_SUAVIZADO_CURVE_FIT, TRACKEO_SUAVIZADO_CURVE_FIT_NUEVO_ORIGEN)
+    change_origin_trackeo(TRACKEO_SUAVIZADO_SAVITZKY, TRACKEO_SUAVIZADO_SAVITZKY_NUEVO_ORIGEN)
+
     # Grafico el trackeo original y el suavizado (ambos con el nuevo origen)
-    graficar(TRACKEO_ORIGINAL_NUEVO_ORIGEN, TRACKEO_SUAVIZADO_NUEVO_ORIGEN)
+    graficar(TRACKEO_ORIGINAL_NUEVO_ORIGEN, TRACKEO_SUAVIZADO_CURVE_FIT_NUEVO_ORIGEN, NOMBRE_GRAFICO_CURVE_FIT)
+    graficar(TRACKEO_ORIGINAL_NUEVO_ORIGEN, TRACKEO_SUAVIZADO_SAVITZKY_NUEVO_ORIGEN, NOMBRE_GRAFICO_SAVITZKY)
 
     # Release video resources
     out.release()
