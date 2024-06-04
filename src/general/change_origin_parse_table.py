@@ -3,10 +3,8 @@ import csv
 # los calculos chinos los hizo Jere,
 # si estás leyendo esto y tenés dudas habla con él
 
-mul_x = -1
-mul_y = -1
 
-def change_origin_trackeo(input, output):
+def change_origin_trackeo(input, output, mul_x=-1, mul_y=-1):
 
     with open(input, 'r') as file:
         reader = csv.reader(file)
