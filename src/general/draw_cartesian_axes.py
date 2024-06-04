@@ -22,12 +22,12 @@ def draw_cartesian_axes(img, origin_x, origin_y, direction=1):
         cv2.arrowedLine(img, (origin_x, end_line_eje_y), (origin_x, 0), (0, 0, 0), thickness,
                         tipLength=tip_length_factor_eje_y)
     else:
-        # Eje x con flecha apuntando hacia la izquierda
+        # Eje x con flecha apuntando hacia la derecha
         cv2.arrowedLine(img, (origin_x, origin_y), (end_line_eje_x+350, origin_y), (0, 0, 0), thickness,
                     tipLength=tip_length_factor_eje_x)
 
         # Eje y con flecha apuntando hacia arriba
-        cv2.arrowedLine(img, (origin_x, end_line_eje_y), (origin_x, 0), (0, 0, 0), thickness,
+        cv2.arrowedLine(img, (origin_x, origin_y), (origin_x, 0), (0, 0, 0), thickness,
                         tipLength=tip_length_factor_eje_y)
 
 
