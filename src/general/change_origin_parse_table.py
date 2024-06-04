@@ -19,7 +19,7 @@ def change_origin_trackeo(input, output, mul_x=-1, mul_y=-1):
     lista_trackeo_mod = []
     nuevos_datos = []
     for x, y, tiempo in datos:
-        new_x, new_y = change_origen_single(x, y, origen)
+        new_x, new_y = change_origen_single(x, y, origen, mul_x, mul_y)
         nuevos_datos.append((str(new_x), str(new_y), tiempo))
 
     with open(output, 'w', newline='') as file:
@@ -29,7 +29,7 @@ def change_origin_trackeo(input, output, mul_x=-1, mul_y=-1):
 
 
 
-def change_origen_single(x, y, origen):
+def change_origen_single(x, y, origen, mul_x, mul_y):
     x = float(x)
     y = float(y)
     new_x = round(mul_x * (x - origen[0]), 4)
