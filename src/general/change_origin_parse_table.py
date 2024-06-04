@@ -29,7 +29,7 @@ def change_origin_trackeo(input, output, mul_x=-1, mul_y=-1):
 
 
 
-def change_origen_single(x, y, origen, mul_x, mul_y):
+def change_origen_single(x, y, origen, mul_x=-1, mul_y=-1):
     x = float(x)
     y = float(y)
     new_x = round(mul_x * (x - origen[0]), 4)
