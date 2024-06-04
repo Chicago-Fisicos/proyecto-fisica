@@ -28,7 +28,7 @@ OUTPUT_VIDEO = "videos/output.mp4"
 
 
 ######################### VARIABLES EDITABLES #########################
-colour_config = {'hmin': 125, 'smin': 0, 'vmin': 0, 'hmax': 179, 'smax': 255, 'vmax': 255}
+colour_config = {'hmin': 0, 'smin': 0, 'vmin': 0, 'hmax': 36, 'smax': 255, 'vmax': 164}
 
 COLOUR_BALL_TRAJECTORY = (0, 0, 255)  # red
 COLOUR_BALL_CONTOUR = (0, 255, 0)  # green
@@ -86,7 +86,7 @@ def process_video():
                 contour_points = cnt['cnt']
                 x, y, _, _ = cv2.boundingRect(contour_points)
 
-                if (y < 450 and x > 400) or (x>170 and y<350):
+                if (x>620 and y<500) and (x<1520):
                     filtered_contours.append(contour_points)
 
                     # Calcular el centro del contorno
@@ -118,7 +118,7 @@ def process_video():
             origin_y = (trackeo_list[0][1])
 
             # Draw cartesian axes
-            draw_cartesian_axes(img, origin_x, origin_y)
+            draw_cartesian_axes(img, origin_x, origin_y, -1)
 
             # Draw velocity vectors
             draw_velocity_vectors(img, trackeo_list)
@@ -148,15 +148,15 @@ def process_video():
 
 
     # Cambio el origen del trackeo original
-    change_origin_trackeo(TRACKEO_ORIGINAL, TRACKEO_ORIGINAL_NUEVO_ORIGEN)
+    change_origin_trackeo(TRACKEO_ORIGINAL, TRACKEO_ORIGINAL_NUEVO_ORIGEN, 1, -1)
 
     # Suavizo el trackeo original
     suavizar_curve_fit(TRACKEO_ORIGINAL, TRACKEO_SUAVIZADO_CURVE_FIT)
     suavizar_savitzky(TRACKEO_ORIGINAL, TRACKEO_SUAVIZADO_SAVITZKY)
 
     # Cambio el origen de los trackeos suavizados
-    change_origin_trackeo(TRACKEO_SUAVIZADO_CURVE_FIT, TRACKEO_SUAVIZADO_CURVE_FIT_NUEVO_ORIGEN)
-    change_origin_trackeo(TRACKEO_SUAVIZADO_SAVITZKY, TRACKEO_SUAVIZADO_SAVITZKY_NUEVO_ORIGEN)
+    change_origin_trackeo(TRACKEO_SUAVIZADO_CURVE_FIT, TRACKEO_SUAVIZADO_CURVE_FIT_NUEVO_ORIGEN, 1, -1)
+    change_origin_trackeo(TRACKEO_SUAVIZADO_SAVITZKY, TRACKEO_SUAVIZADO_SAVITZKY_NUEVO_ORIGEN, 1, -1)
 
     # Grafico el trackeo original y el suavizado (ambos con el nuevo origen)
     graficar(TRACKEO_ORIGINAL_NUEVO_ORIGEN, TRACKEO_SUAVIZADO_CURVE_FIT_NUEVO_ORIGEN, NOMBRE_GRAFICO_CURVE_FIT)
