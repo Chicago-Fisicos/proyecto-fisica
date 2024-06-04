@@ -125,20 +125,20 @@ def process_video():
 
         # Draw cartesian axes with these values
         # origin_x=853/VIDEO_WINDOW_SIZE(0.7)=1219
-        origin_x = 1219
+        origin_x = 622
         # origin_y=311/VIDEO_WINDOW_SIZE(0.7)=444
-        origin_y = 444
-        end_line_eje_x = 1600
+        origin_y = 462
+        end_line_eje_x = 1700
         end_line_eje_y = 800
 
         # Draw cartesian axes
-       # draw_cartesian_axes(img, origin_x, origin_y, end_line_eje_x, end_line_eje_y)
+        draw_cartesian_axes(img, origin_x, origin_y)
 
         # Draw velocity vectors
-        #draw_velocity_vectors(img, trackeo_list)
+        draw_velocity_vectors(img, trackeo_list)
 
         # Draw acceleration vectors
-        #draw_acceleration_vectors(img, trackeo_list)
+        draw_acceleration_vectors(img, trackeo_list)
 
         # Guarda video nuevo
         out.write(img)
@@ -163,15 +163,15 @@ def process_video():
 
 
     # Cambio el origen del trackeo original
-    change_origin_trackeo(TRACKEO_ORIGINAL, TRACKEO_ORIGINAL_NUEVO_ORIGEN, 1, 1)
+    change_origin_trackeo(TRACKEO_ORIGINAL, TRACKEO_ORIGINAL_NUEVO_ORIGEN, 1, -1)
 
     # Suavizo el trackeo original
     suavizar_curve_fit(TRACKEO_ORIGINAL, TRACKEO_SUAVIZADO_CURVE_FIT)
     suavizar_savitzky(TRACKEO_ORIGINAL, TRACKEO_SUAVIZADO_SAVITZKY)
 
     # Cambio el origen de los trackeos suavizados
-    change_origin_trackeo(TRACKEO_SUAVIZADO_CURVE_FIT, TRACKEO_SUAVIZADO_CURVE_FIT_NUEVO_ORIGEN,1 ,1)
-    change_origin_trackeo(TRACKEO_SUAVIZADO_SAVITZKY, TRACKEO_SUAVIZADO_SAVITZKY_NUEVO_ORIGEN, 1, 1)
+    change_origin_trackeo(TRACKEO_SUAVIZADO_CURVE_FIT, TRACKEO_SUAVIZADO_CURVE_FIT_NUEVO_ORIGEN,1 ,-1)
+    change_origin_trackeo(TRACKEO_SUAVIZADO_SAVITZKY, TRACKEO_SUAVIZADO_SAVITZKY_NUEVO_ORIGEN, 1, -1)
 
     # Grafico el trackeo original y el suavizado (ambos con el nuevo origen)
     graficar(TRACKEO_ORIGINAL_NUEVO_ORIGEN, TRACKEO_SUAVIZADO_CURVE_FIT_NUEVO_ORIGEN, NOMBRE_GRAFICO_CURVE_FIT)
