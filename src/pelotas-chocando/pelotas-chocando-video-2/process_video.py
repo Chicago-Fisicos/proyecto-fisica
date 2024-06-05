@@ -7,11 +7,16 @@ from src.general.draw_cartesian_axes import draw_cartesian_axes
 from src.general.draw_velocity_vectors import draw_velocity_vectors
 from src.general.suavizar_tabla import suavizar_curve_fit, suavizar_savitzky, graficar
 
+
+
 # Size of video window. Default = 1, but is very big
 # 0.55 for notebook
 # 0.7 for big screen
-VIDEO_WINDOW_SIZE = 0.7 # NO CAMBIARLO PORQUE MODIFICA EL TAMAÑO DEL EJE DE COORDENADAS
+VIDEO_WINDOW_SIZE = 0.7  # NO CAMBIARLO PORQUE MODIFICA EL TAMAÑO DEL EJE DE COORDENADAS
 
+TRACKEO_ORIGINAL_BASKET = 'tablas/trackeo-original-basket.csv'
+TRACKEO_ORIGINAL_TENIS = 'tablas/trackeo-original-tenis.csv'
+'''
 TRACKEO_ORIGINAL = 'tablas/trackeo-original.csv'
 TRACKEO_ORIGINAL_NUEVO_ORIGEN = 'tablas/trackeo-original-nuevo-origen.csv'
 
@@ -22,24 +27,29 @@ NOMBRE_GRAFICO_CURVE_FIT = "graficos/curve_fit.png"
 TRACKEO_SUAVIZADO_SAVITZKY = "tablas/trackeo-suavizado-savitzky.csv"
 TRACKEO_SUAVIZADO_SAVITZKY_NUEVO_ORIGEN = "tablas/trackeo-suavizado-savitzky-nuevo-origen.csv"
 NOMBRE_GRAFICO_SAVITZKY = "graficos/savitzky.png"
+'''
 
 INPUT_VIDEO = "videos/input.MOV"
 OUTPUT_VIDEO = "videos/output.mp4"
 
-
 ######################### VARIABLES EDITABLES #########################
 colour_config = {'hmin': 8, 'smin': 124, 'vmin': 0, 'hmax': 40, 'smax': 255, 'vmax': 255}
 
-COLOUR_BALL_TRAJECTORY = (0, 0, 255)  # red
-COLOUR_BALL_CONTOUR = (0, 255, 0)  # green
+COLOUR_BALL_BASKET = (0, 80, 255)
+COLOUR_BALL_TENIS = (51, 255, 100)
 
 # ancho de la linea roja
-BALL_LINE_WIDTH = 2
+BALL_CIRCLE_WIDTH = 5
 
 # lower = faster, higher = slower
 VIDEO_SPEED = 1
-#######################################################################
 
+# Definimos el área mínima y máxima esperada para cada tipo de pelota
+MIN_AREA_BASKETBALL = 500
+MAX_AREA_BASKETBALL = 3000
+MIN_AREA_TENNIS = 50
+MAX_AREA_TENNIS = 300
+#######################################################################
 
 def process_video():
 
@@ -48,10 +58,6 @@ def process_video():
 
     # Initialize ColorFinder object for color detection
     my_color_finder = ColorFinder(False)  # false because we don't need to detect colour
-
-    center_points = []
-    trackeo_list = []  # List to store X, Y, Time
-
 
     # Get video info
     fps = get_fps(cap)
@@ -66,6 +72,9 @@ def process_video():
     # Establecer la función de devolución de llamada del clic del ratón
     cv2.setMouseCallback('Image Contours', click_event)
 
+    trackeo_list_basket = []
+    trackeo_list_tenis = []
+
     while True:
         success, img = cap.read()
 
@@ -78,76 +87,57 @@ def process_video():
         # minArea y maxArea son el área min y max que debe tener un contorno para ser considerado válido
         img_contours, contours = cvzone.findContours(img, mask, minArea=10, maxArea=5000)
 
-        # List to store filtered contours
-        filtered_contours = []
-
-        if contours is not None:
+        if contours:
             for cnt in contours:
                 contour_points = cnt['cnt']
                 x, y, _, _ = cv2.boundingRect(contour_points)
 
-                if (314<x<1592 and 170<y<450):
-                    filtered_contours.append(contour_points)
+                if 314 < x < 1700 and 170 < y < 800:
+                    area = cnt['area']
+                    current_center = cnt['center']
+                    current_time_ms = cap.get(cv2.CAP_PROP_POS_MSEC)
+                    current_time_sec = current_time_ms / 1000
 
-                    # Calcular el centro del contorno
-                    M = cv2.moments(contour_points)
-                    if M["m00"] != 0:
-                        center_x = int(M["m10"] / M["m00"])
-                        center_y = int(M["m01"] / M["m00"])
-                        current_center = (center_x, center_y)
-                        # Dibujar el punto en el centro del contorno
-                        cv2.circle(img, current_center, 3, (255, 0, 0), -1)
-                        center_points.append(current_center)
+                    if MIN_AREA_BASKETBALL <= area <= MAX_AREA_BASKETBALL:
+                        trackeo_list_basket.append((*current_center, current_time_sec))
+                        cv2.circle(img, current_center, 3, COLOUR_BALL_BASKET, -1)
+                    elif MIN_AREA_TENNIS <= area <= MAX_AREA_TENNIS:
+                        trackeo_list_tenis.append((*current_center, current_time_sec))
+                        cv2.circle(img, current_center, 3, COLOUR_BALL_TENIS, -1)
 
-                        # Agregar datos de coordenadas (X, Y) y tiempo a la lista
-                        current_time_ms = cap.get(cv2.CAP_PROP_POS_MSEC)
-                        current_time_sec = current_time_ms / 1000
-                        trackeo_list.append((current_center[0], current_center[1], current_time_sec))
+        for point in trackeo_list_basket:
+            current_center = (point[0], point[1])
+            cv2.circle(img, current_center, BALL_CIRCLE_WIDTH, COLOUR_BALL_BASKET, -1)
 
-        # Dibuja contorno de la pelota
-        if filtered_contours:
-            cv2.drawContours(img, filtered_contours, -1, COLOUR_BALL_CONTOUR, 2)
+        for point in trackeo_list_tenis:
+            current_center = (point[0], point[1])
+            cv2.circle(img, current_center, BALL_CIRCLE_WIDTH, COLOUR_BALL_TENIS, -1)
 
-        # Draw the line that follows the path of the contour center in real-time
-        if len(center_points) > 1:
-            for i in range(1, len(center_points)):
-                cv2.line(img, center_points[i - 1], center_points[i], COLOUR_BALL_TRAJECTORY, BALL_LINE_WIDTH)
-
-        if len(trackeo_list) > 1:
-            origin_x = (trackeo_list[0][0])
-            origin_y = (trackeo_list[0][1])
-
-            # Draw cartesian axes
-            #draw_cartesian_axes(img, origin_x, origin_y)
-
-            # Draw velocity vectors
-            #draw_velocity_vectors(img, trackeo_list)
-
-            # Draw acceleration vectors
-            #draw_acceleration_vectors(img, trackeo_list)
-
-        # Guarda video nuevo
         out.write(img)
-
-        # Resize and display the image
         img = cv2.resize(img, (0, 0), None, VIDEO_WINDOW_SIZE, VIDEO_WINDOW_SIZE)
         cv2.imshow('Image Contours', img)
 
-        # Check for quit command
         if cv2.waitKey(VIDEO_SPEED) & 0xFF == ord('q'):
             break
 
-    # Save (X, Y, Time) to a CSV file
-    with open(TRACKEO_ORIGINAL, 'w') as f:
+    with open(TRACKEO_ORIGINAL_BASKET, 'w') as f:
         f.write("X,Y,Time\n")
-        for point in trackeo_list:
+        for point in trackeo_list_basket:
             x = round(point[0], 4)
             y = round(point[1], 4)
             time = round(point[2], 4)
             f.write(f"{x},{y},{time}\n")
 
+    with open(TRACKEO_ORIGINAL_TENIS, 'w') as f:
+        f.write("X,Y,Time\n")
+        for point in trackeo_list_tenis:
+            x = round(point[0], 4)
+            y = round(point[1], 4)
+            time = round(point[2], 4)
+            f.write(f"{x},{y},{time}\n")
 
     # Cambio el origen del trackeo original
+    '''
     change_origin_trackeo(TRACKEO_ORIGINAL, TRACKEO_ORIGINAL_NUEVO_ORIGEN)
 
     # Suavizo el trackeo original
@@ -161,7 +151,7 @@ def process_video():
     # Grafico el trackeo original y el suavizado (ambos con el nuevo origen)
     graficar(TRACKEO_ORIGINAL_NUEVO_ORIGEN, TRACKEO_SUAVIZADO_CURVE_FIT_NUEVO_ORIGEN, NOMBRE_GRAFICO_CURVE_FIT)
     graficar(TRACKEO_ORIGINAL_NUEVO_ORIGEN, TRACKEO_SUAVIZADO_SAVITZKY_NUEVO_ORIGEN, NOMBRE_GRAFICO_SAVITZKY)
-
+    '''
     # Release video resources
     out.release()
     cap.release()
@@ -175,7 +165,8 @@ def click_event(event, x, y, flags, params):
         # es decir, fue multiplicado por VIDEO_WINDOW_SIZE, por lo tanto se achicó la resolucion
         # esto se hizo para que entre el video en la pantalla.
         # al dividir, estamos obteniendo el pixel original
-        print("Coordenadas del click - X:", x/VIDEO_WINDOW_SIZE, "Y:", y/VIDEO_WINDOW_SIZE)
+        print("Coordenadas del click - X:", x / VIDEO_WINDOW_SIZE, "Y:", y / VIDEO_WINDOW_SIZE)
+
 
 def get_fps(cap):
     fps = cap.get(cv2.CAP_PROP_FPS)
