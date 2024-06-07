@@ -15,7 +15,7 @@ def main(ruta_archivo):
     envolvente = np.abs(audio)
 
     # Detectar los picos (momentos de impacto)
-    umbral_minimo_picos = 0.1 * np.max(envolvente)
+    umbral_minimo_picos = 1000
     picos, _ = find_peaks(envolvente, height=umbral_minimo_picos, distance=int(tasa_muestreo * 0.1))
 
     # Convertir los picos a tiempos en segundos
