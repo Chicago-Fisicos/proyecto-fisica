@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 #variables
 RUTA_CSV = "../chipi/tablas/trackeo-suavizado-curve-fit-nuevo-origen.csv"
 RUTA_OUTPUT_CSV = "./output.csv"
-RUTA_CARPETA_IMAGENES = "./graficas/"
+RUTA_CARPETA_IMAGENES = "./graficas/" #Si esta carpeta no existe da error
 
 ### este valor se calcula a partir comparar la medida de un objeto en el video y en la realidad
 ### debe ser calculado para cada video
@@ -160,6 +160,32 @@ def graficar_aceleracion_tiempo(tabla, coordenada, guardar_grafica=None, mostrar
     if mostrar_grafica:
         plt.show()
 
+def graficar_posicion_xy(tabla, guardar_grafica=None, mostrar_grafica=None):
+    """
+    Grafica la posición de la nave en el eje X contra el eje Y en un DataFrame de pandas.
+
+    Args:
+        tabla (pandas.DataFrame): El DataFrame que contiene los datos.
+        guardar_grafica (bool, opcional): Si es True, guarda el gráfico como una imagen. Defaults a None.
+        mostrar_grafica (bool, opcional): Si es True, muestra el gráfico. Defaults a None.
+
+    Returns:
+        None
+    """
+
+    # tipo de grafico y variables a usar
+    plt.plot(tabla["X"], tabla["Y"])
+    # etiquetas
+    plt.xlabel('posicion en el eje X (m)')
+    plt.ylabel('posicion en el eje Y (m)')
+    # titulo
+    plt.title('Posicion')
+
+    if guardar_grafica:
+        plt.savefig(RUTA_CARPETA_IMAGENES + "posicion_xy.png")
+    if mostrar_grafica:
+        plt.show()
+
 def agregar_datos_movimiento(tabla):
     """
         Agrega columnas de velocidad y aceleración a una tabla de datos.
@@ -214,5 +240,8 @@ graficar_aceleracion_tiempo(tabla_movimiento, "X",1,1)
 graficar_posicion_tiempo(tabla_movimiento, "Y",1,1)
 graficar_velocidad_tiempo(tabla_movimiento, "Y",1,1)
 graficar_aceleracion_tiempo(tabla_movimiento, "Y",1,1)
+
+#graficar posicion de x respecto a y
+graficar_posicion_xy(tabla_movimiento,1,1)
 
 tabla_movimiento.to_csv(RUTA_OUTPUT_CSV)
