@@ -4,7 +4,6 @@ import matplotlib.pyplot as plt
 from scipy.optimize import curve_fit
 from scipy.signal import savgol_filter
 
-
 # Definir una función de segundo grado para el ajuste
 def func(x, a, b, c):
     return a * x**2 + b * x + c
@@ -19,10 +18,12 @@ def suavizar_curve_fit(csv_original, csv_suavizado):
     Time = df['Time'].values
 
     # Ajustar la función cuadrática a los datos de X
-    params_x, _ = curve_fit(func, np.arange(len(X)), X)
+    params_x, covariance_x = curve_fit(func, np.arange(len(X)), X)
+    errors_x = np.sqrt(np.diag(covariance_x))  # Errores estándar de los parámetros de X
 
     # Ajustar la función cuadrática a los datos de Y
-    params_y, _ = curve_fit(func, np.arange(len(Y)), Y)
+    params_y, covariance_y = curve_fit(func, np.arange(len(Y)), Y)
+    errors_y = np.sqrt(np.diag(covariance_y))  # Errores estándar de los parámetros de Y
 
     # Generar los valores suavizados para X e Y utilizando las funciones ajustadas
     X_suavizado = func(np.arange(len(X)), *params_x)
@@ -41,6 +42,17 @@ def suavizar_curve_fit(csv_original, csv_suavizado):
 
     # Guardar la nueva tabla en un archivo CSV
     df_suavizado.to_csv(csv_suavizado, index=False)
+
+    print("Resultados del ajuste con curve fit:")
+    print("  Resultados del ajuste para X:")
+    print(f"    a = {params_x[0]:.6f} ± {errors_x[0]:.6f} (El parámetro cuadrático de la función de ajuste)")
+    print(f"    b = {params_x[1]:.6f} ± {errors_x[1]:.6f} (El parámetro lineal de la función de ajuste)")
+    print(f"    c = {params_x[2]:.6f} ± {errors_x[2]:.6f} (El término constante de la función de ajuste)\n")
+
+    print("  Resultados del ajuste para Y:")
+    print(f"    a = {params_y[0]:.6f} ± {errors_y[0]:.6f} (El parámetro cuadrático de la función de ajuste)")
+    print(f"    b = {params_y[1]:.6f} ± {errors_y[1]:.6f} (El parámetro lineal de la función de ajuste)")
+    print(f"    c = {params_y[2]:.6f} ± {errors_y[2]:.6f} (El término constante de la función de ajuste)\n")
 
 def suavizar_savitzky(csv_original, csv_suavizado):
     # Leer el archivo CSV
@@ -62,6 +74,14 @@ def suavizar_savitzky(csv_original, csv_suavizado):
     X_suavizado = np.round(X_suavizado, 4)
     Y_suavizado = np.round(Y_suavizado, 4)
 
+    # Calcular los residuos
+    residuos_X = X - X_suavizado
+    residuos_Y = Y - Y_suavizado
+
+    # Calcular la desviación estándar de los residuos
+    error_std_X = np.std(residuos_X)
+    error_std_Y = np.std(residuos_Y)
+
     # Crear una nueva tabla con los valores suavizados
     df_suavizado = pd.DataFrame({
         'X': X_suavizado,
@@ -71,6 +91,13 @@ def suavizar_savitzky(csv_original, csv_suavizado):
 
     # Guardar la nueva tabla en un archivo CSV
     df_suavizado.to_csv(csv_suavizado, index=False)
+
+    # Imprimir detalles del suavizado
+    print("\nResultados del suavizado con Savitzky-Golay:")
+    print(f"Longitud de la ventana: {window_length}")
+    print(f"Orden del polinomio: {polyorder}")
+    print(f"Error estándar de los valores suavizados para X: {error_std_X:.6f}")
+    print(f"Error estándar de los valores suavizados para Y: {error_std_Y:.6f}")
 
 def graficar(csv_original, csv_suavizado, nombre_archivo="grafico.png"):
     # Leer los archivos CSV
