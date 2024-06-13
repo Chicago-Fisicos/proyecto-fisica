@@ -1,8 +1,9 @@
 import pandas as pd
 import matplotlib.pyplot as plt
+import math
 
 #variables
-RUTA_CSV = "../chipi/tablas/trackeo-suavizado-curve-fit-nuevo-origen.csv"
+RUTA_CSV = "../basket-doble/tablas/trackeo-suavizado-curve-fit-nuevo-origen.csv"
 RUTA_OUTPUT_CSV = "./output.csv"
 RUTA_CARPETA_IMAGENES = "./graficas/" #Si esta carpeta no existe da error
 
@@ -221,6 +222,100 @@ def generar_datos_movimiento_metros(tabla):
 
     return tabla_nueva
 
+def velocidad_inicial_x_teorica(tabla):
+    """
+    Calcula la velocidad inicial en el eje x teórico.
+
+    Args:
+        tabla (pandas.DataFrame): La tabla de datos.
+
+    Returns:
+        float: La velocidad inicial en el eje x teórico.
+    """
+    delta_t = tabla["Time"].iloc[-1] - tabla["Time"].iloc[0]
+    delta_x = tabla["X"].iloc[-1] - tabla["X"].iloc[0]
+    return delta_x / delta_t
+
+def velocidad_inicial_y_teorica(tabla):
+    """
+    Calcula la velocidad inicial en el eje y teórica.
+
+    Args:
+        tabla (pandas.DataFrame): La tabla de datos.
+
+    Returns:
+        float: La velocidad inicial en el eje y teórica.
+    """
+    t = tabla["Time"].iloc[-1] - tabla["Time"].iloc[0]
+    y_final = tabla["Y"].iloc[-1]
+    y_inicial = tabla["Y"].iloc[0]
+    g = 9.8
+
+    return (y_final - y_inicial + g * (t ** 2) * 0.5)/t
+
+def calcular_posicion_x(x_inicial, v_inicial, t):
+    """
+        Calcula la posición en el eje x dada la posición inicial, la velocidad inicial y el tiempo.
+        Siguiendo un movimiento rectilineo y uniforme.
+        Parameters:
+            x_inicial (float): La posicion inicial en el eje x.
+            v_inicial (float): La velocidad inicial en el eje x.
+            t (float): Tiempo.
+        Returns:
+            float: La posición en el eje x después del tiempo t.
+        """
+    return x_inicial + v_inicial * t
+
+def calcular_posicion_y(y_inicial, v_inicial, t):
+    """
+    Calculate the position in the y-axis given the initial position, initial velocity, and time.
+    Siguiendo un movimiento uniformemente variado.
+
+    Parameters:
+        y_inicial (float): La posicion inicial en el eje y.
+        v_inicial (float): La velocidad inicial en el eje y.
+        t (float): El tiempo.
+
+    Returns:
+        float: La posición en el eje x después del tiempo t.
+    """
+    g = 9.8
+    return y_inicial + v_inicial * t - 0.5 * g * (t ** 2)
+
+def generar_posicion_x_teorica(tabla):
+    """
+    Agrega a la tabla la posición en el eje x teórico.
+
+    Args:
+        tabla (pandas.DataFrame): La tabla de datos.
+
+    Returns:
+        tabla (pandas.DataFrame): La tabla de datos con la columna "X_teorica" .
+    """
+    tabla_nueva = tabla.copy()
+    x_inicial = tabla_nueva["X"].iloc[0]
+    v_inicial = velocidad_inicial_x_teorica(tabla_nueva)
+    tabla_nueva["X_teorica"] = tabla_nueva["Time"].apply(lambda t: calcular_posicion_x(x_inicial, v_inicial, t))
+
+    return tabla_nueva
+
+def generar_posicion_y_teorica(tabla):
+    """
+    Agrega a la tabla la posicion en el eje y teórica.
+
+    Args:
+        tabla (pandas.DataFrame): La tabla de datos.
+
+    Returns:
+        tabla (pandas.DataFrame): La tabla de datos con la columna "Y_teorica" .
+    """
+    tabla_nueva = tabla.copy()
+    y_inicial = tabla_nueva["Y"].iloc[0]
+    v_inicial = velocidad_inicial_y_teorica(tabla_nueva)
+    tabla_nueva["Y_teorica"] = tabla_nueva["Time"].apply(lambda t: calcular_posicion_y(y_inicial, v_inicial, t))
+
+    return tabla_nueva
+
 ##################################################
 #           EJEMPLO DE EJECUCION                 #
 ##################################################
@@ -245,3 +340,9 @@ graficar_aceleracion_tiempo(tabla_movimiento, "Y",1,1)
 graficar_posicion_xy(tabla_movimiento,1,1)
 
 tabla_movimiento.to_csv(RUTA_OUTPUT_CSV)
+
+
+
+
+
+
