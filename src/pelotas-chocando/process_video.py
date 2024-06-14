@@ -1,11 +1,12 @@
 import cv2
 import cvzone
 from cvzone.ColorModule import ColorFinder
-from src.general.change_origin_parse_table import change_origin_trackeo
+from src.general.change_origin_parse_table import change_origin_trackeo, cambiar_origen_a_coordenadas_especificas
 from src.general.draw_acceleration_vectors import draw_acceleration_vectors
 from src.general.draw_cartesian_axes import draw_cartesian_axes
 from src.general.draw_velocity_vectors import draw_velocity_vectors
 from src.general.suavizar_tabla import suavizar_curve_fit, suavizar_savitzky, graficar
+from procesar_choque import separar_datos_por_choque
 
 
 # Size of video window. Default = 1, but is very big
@@ -14,19 +15,25 @@ from src.general.suavizar_tabla import suavizar_curve_fit, suavizar_savitzky, gr
 VIDEO_WINDOW_SIZE = 0.7 # NO CAMBIARLO PORQUE MODIFICA EL TAMAÑO DEL EJE DE COORDENADAS
 
 TRACKEO_ORIGINAL_BASKET = 'tablas/trackeo-original-basket.csv'
+TRACKEO_ORIGINAL_BASKET_ANTES = 'tablas/trackeo-original-basket_antes_de_choque.csv'
+TRACKEO_ORIGINAL_BASKET_DESPUES = 'tablas/trackeo-original-basket_despues_de_choque.csv'
 TRACKEO_ORIGINAL_TENIS = 'tablas/trackeo-original-tenis.csv'
-'''
-TRACKEO_ORIGINAL = 'tablas/trackeo-original.csv'
-TRACKEO_ORIGINAL_NUEVO_ORIGEN = 'tablas/trackeo-original-nuevo-origen.csv'
 
-TRACKEO_SUAVIZADO_CURVE_FIT = "tablas/trackeo-suavizado-curve-fit.csv"
+TRACKEO_ORIGINAL_BASKET_NUEVO_ORIGEN = 'tablas/trackeo-original-basket-nuevo-origen.csv'
+TRACKEO_ORIGINAL_TENIS_NUEVO_ORIGEN = 'tablas/trackeo-original-tenis-nuevo-origen.csv'
+
+TRACKEO_BASKET_ANTES_SUAVIZADO_CURVE_FIT = "tablas/trackeo-basket-antes-suavizado-curve-fit.csv"
+TRACKEO_BASKET_DESPUES_SUAVIZADO_CURVE_FIT = "tablas/trackeo-basket-despues-suavizado-curve-fit.csv"
+TRACKEO_BASKET_ANTES_SUAVIZADO_SAVITZKY = "tablas/trackeo-basket-antes-suavizado-savitzky.csv"
+TRACKEO_BASKET_DESPUES_SUAVIZADO_SAVITZKY = "tablas/trackeo-basket-despues-suavizado-savitzky.csv"
+
 TRACKEO_SUAVIZADO_CURVE_FIT_NUEVO_ORIGEN = "tablas/trackeo-suavizado-curve-fit-nuevo-origen.csv"
 NOMBRE_GRAFICO_CURVE_FIT = "graficos/curve_fit.png"
 
 TRACKEO_SUAVIZADO_SAVITZKY = "tablas/trackeo-suavizado-savitzky.csv"
 TRACKEO_SUAVIZADO_SAVITZKY_NUEVO_ORIGEN = "tablas/trackeo-suavizado-savitzky-nuevo-origen.csv"
 NOMBRE_GRAFICO_SAVITZKY = "graficos/savitzky.png"
-'''
+
 
 INPUT_VIDEO = "videos/input.MOV"
 OUTPUT_VIDEO = "videos/output.mp4"
@@ -136,23 +143,27 @@ def process_video():
             time = round(point[2], 4)
             f.write(f"{x},{y},{time}\n")
 
+    separar_datos_por_choque(TRACKEO_ORIGINAL_BASKET, 0.68)
+    separar_datos_por_choque(TRACKEO_ORIGINAL_TENIS, 0.7)
 
     # Cambio el origen del trackeo original
-    '''
-    change_origin_trackeo(TRACKEO_ORIGINAL, TRACKEO_ORIGINAL_NUEVO_ORIGEN)
+
+    cambiar_origen_a_coordenadas_especificas(TRACKEO_ORIGINAL_BASKET, 300, 750)
 
     # Suavizo el trackeo original
-    suavizar_curve_fit(TRACKEO_ORIGINAL, TRACKEO_SUAVIZADO_CURVE_FIT)
-    suavizar_savitzky(TRACKEO_ORIGINAL, TRACKEO_SUAVIZADO_SAVITZKY)
+    suavizar_curve_fit(TRACKEO_ORIGINAL_BASKET_ANTES, TRACKEO_BASKET_ANTES_SUAVIZADO_CURVE_FIT)
+    suavizar_curve_fit(TRACKEO_ORIGINAL_BASKET_DESPUES, TRACKEO_BASKET_DESPUES_SUAVIZADO_CURVE_FIT)
+
+    #suavizar_curve_fit(TRACKEO_ORIGINAL_BASKET, TRACKEO_SUAVIZADO_CURVE_FIT)
 
     # Cambio el origen de los trackeos suavizados
-    change_origin_trackeo(TRACKEO_SUAVIZADO_CURVE_FIT, TRACKEO_SUAVIZADO_CURVE_FIT_NUEVO_ORIGEN)
-    change_origin_trackeo(TRACKEO_SUAVIZADO_SAVITZKY, TRACKEO_SUAVIZADO_SAVITZKY_NUEVO_ORIGEN)
+    #change_origin_trackeo(TRACKEO_SUAVIZADO_CURVE_FIT, TRACKEO_SUAVIZADO_CURVE_FIT_NUEVO_ORIGEN)
+    #change_origin_trackeo(TRACKEO_SUAVIZADO_SAVITZKY, TRACKEO_SUAVIZADO_SAVITZKY_NUEVO_ORIGEN)
 
     # Grafico el trackeo original y el suavizado (ambos con el nuevo origen)
-    graficar(TRACKEO_ORIGINAL_NUEVO_ORIGEN, TRACKEO_SUAVIZADO_CURVE_FIT_NUEVO_ORIGEN, NOMBRE_GRAFICO_CURVE_FIT)
-    graficar(TRACKEO_ORIGINAL_NUEVO_ORIGEN, TRACKEO_SUAVIZADO_SAVITZKY_NUEVO_ORIGEN, NOMBRE_GRAFICO_SAVITZKY)
-    '''
+    #graficar(TRACKEO_ORIGINAL_NUEVO_ORIGEN, TRACKEO_SUAVIZADO_CURVE_FIT_NUEVO_ORIGEN, NOMBRE_GRAFICO_CURVE_FIT)
+    #graficar(TRACKEO_ORIGINAL_NUEVO_ORIGEN, TRACKEO_SUAVIZADO_SAVITZKY_NUEVO_ORIGEN, NOMBRE_GRAFICO_SAVITZKY)
+
     # Release video resources
     out.release()
     cap.release()

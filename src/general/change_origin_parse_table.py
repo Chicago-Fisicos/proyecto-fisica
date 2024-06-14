@@ -1,4 +1,5 @@
 import csv
+import pandas as pd
 
 # los calculos chinos los hizo Jere,
 # si estás leyendo esto y tenés dudas habla con él
@@ -43,7 +44,25 @@ def change_origen_single(x, y, origen, mul_x=-1, mul_y=-1):
     return new_x, new_y
 
 
+def cambiar_origen_a_coordenadas_especificas(csv_file, nuevo_origen_x, nuevo_origen_y):
+    # Leer el archivo CSV
+    df = pd.read_csv(csv_file)
+
+    # Calcular las nuevas coordenadas
+    df['X_nuevo_origen'] = df['X'] - nuevo_origen_x
+    df['Y_nuevo_origen'] = (df['Y'] - nuevo_origen_y) * -1
+
+    # Guardar el archivo CSV con las nuevas columnas
+    df.to_csv(csv_file, index=False)
+
+
+
 if __name__ == "__main__":
     INPUT = "../chipi/trackeo-original.csv"
     OUTPUT = "../chipi/trackeo-mod.csv"
-    change_origin_trackeo(INPUT, OUTPUT)
+    #change_origin_trackeo(INPUT, OUTPUT)
+
+    TRACKEO_ORIGINAL_BASKET = "trackeo-original-basket.csv"
+    NUEVO_ORIGEN_X = 200  # Ejemplo de nueva coordenada X del origen
+    NUEVO_ORIGEN_Y = 100  # Ejemplo de nueva coordenada Y del origen
+    #transformar_origen(TRACKEO_ORIGINAL_BASKET, NUEVO_ORIGEN_X, NUEVO_ORIGEN_Y)
