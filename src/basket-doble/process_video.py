@@ -5,6 +5,7 @@ from src.general.change_origin_parse_table import change_origin_trackeo
 from src.general.draw_acceleration_vectors import draw_acceleration_vectors
 from src.general.draw_cartesian_axes import draw_cartesian_axes
 from src.general.draw_velocity_vectors import draw_velocity_vectors
+from src.general.read_tracking_data import read_tracking_data
 from src.general.suavizar_tabla import suavizar_curve_fit, suavizar_savitzky, graficar
 
 # Size of video window. Default = 1, but is very big
@@ -113,18 +114,20 @@ def process_video():
             for i in range(1, len(center_points)):
                 cv2.line(img, center_points[i - 1], center_points[i], COLOUR_BALL_TRAJECTORY, BALL_LINE_WIDTH)
 
+        trackeo_suavizado_list = read_tracking_data(TRACKEO_SUAVIZADO_CURVE_FIT)
+
         if len(trackeo_list) > 1:
             origin_x = (trackeo_list[0][0])
             origin_y = (trackeo_list[0][1])
 
             # Draw cartesian axes
-            draw_cartesian_axes(img, origin_x, origin_y)
+            draw_cartesian_axes(img, origin_x, origin_y,1)
 
             # Draw velocity vectors
-            draw_velocity_vectors(img, trackeo_list)
+            draw_velocity_vectors(img, trackeo_suavizado_list)
 
             # Draw acceleration vectors
-            draw_acceleration_vectors(img, trackeo_list)
+            draw_acceleration_vectors(img, trackeo_suavizado_list)
 
         # Guarda video nuevo
         out.write(img)

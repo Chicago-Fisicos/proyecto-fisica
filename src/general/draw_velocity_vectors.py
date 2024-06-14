@@ -29,7 +29,7 @@ def draw_velocity_vectors(img, trackeo_list):
 
         # Al sumar la posición inicial x con la componente vx, obtenemos la coordenada x del punto final del vector., lo mismo para y
         # se multiplica con velocity_scale para que sea vea mejor en el video
-        end_point = (int(trackeo_list[i][0] + vx * -velocity_scale), int(trackeo_list[i][1] + vy * -velocity_scale))
+        end_point = (int(trackeo_list[i][0] + vx * velocity_scale), int(trackeo_list[i][1] + vy * velocity_scale))
 
         # Dibuja la línea con flecha en la imagen desde start_point hasta end_point
         cv2.arrowedLine(img, start_point, end_point, colour_velocity_vector, thickness)
