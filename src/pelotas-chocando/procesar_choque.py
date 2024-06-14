@@ -20,8 +20,8 @@ def separar_datos_por_choque(csv_file, tiempo_choque):
     df_despues.drop(columns=['choque'], inplace=True)
 
     # Definir nombres de archivo para los archivos de salida
-    archivo_antes = f'{csv_file.replace(".csv", "")}_antes_de_choque.csv'
-    archivo_despues = f'{csv_file.replace(".csv", "")}_despues_de_choque.csv'
+    archivo_antes = f'{csv_file.replace(".csv", "")}-antes-de-choque.csv'
+    archivo_despues = f'{csv_file.replace(".csv", "")}-despues-de-choque.csv'
 
     # Guardar los DataFrames en archivos CSV
     df.to_csv(csv_file, index=False)

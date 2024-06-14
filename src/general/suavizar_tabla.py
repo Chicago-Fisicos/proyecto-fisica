@@ -4,17 +4,19 @@ import matplotlib.pyplot as plt
 from scipy.optimize import curve_fit
 from scipy.signal import savgol_filter
 
+
 # Definir una función de segundo grado para el ajuste
 def func(x, a, b, c):
-    return a * x**2 + b * x + c
+    return a * x ** 2 + b * x + c
 
-def suavizar_curve_fit(csv_original, csv_suavizado):
+
+def suavizar_curve_fit(csv_original, csv_suavizado, eje_x='X', eje_y='Y'):
     # Leer el archivo CSV
     df = pd.read_csv(csv_original)
 
     # Extraer columnas X, Y y Time
-    X = df['X'].values
-    Y = df['Y'].values
+    X = df[eje_x].values
+    Y = df[eje_y].values
     Time = df['Time'].values
 
     # Ajustar la función cuadrática a los datos de X
@@ -53,6 +55,7 @@ def suavizar_curve_fit(csv_original, csv_suavizado):
     print(f"    a = {params_y[0]:.6f} ± {errors_y[0]:.6f} (El parámetro cuadrático de la función de ajuste)")
     print(f"    b = {params_y[1]:.6f} ± {errors_y[1]:.6f} (El parámetro lineal de la función de ajuste)")
     print(f"    c = {params_y[2]:.6f} ± {errors_y[2]:.6f} (El término constante de la función de ajuste)\n")
+
 
 def suavizar_savitzky(csv_original, csv_suavizado):
     # Leer el archivo CSV
@@ -99,6 +102,7 @@ def suavizar_savitzky(csv_original, csv_suavizado):
     print(f"Error estándar de los valores suavizados para X: {error_std_X:.6f}")
     print(f"Error estándar de los valores suavizados para Y: {error_std_Y:.6f}")
 
+
 def graficar(csv_original, csv_suavizado, nombre_archivo="grafico.png"):
     # Leer los archivos CSV
     df1 = pd.read_csv(csv_original)
@@ -124,4 +128,3 @@ def graficar(csv_original, csv_suavizado, nombre_archivo="grafico.png"):
 
     # Mostrar la gráfica
     plt.show()
-

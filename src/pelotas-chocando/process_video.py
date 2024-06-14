@@ -7,7 +7,8 @@ from src.general.draw_cartesian_axes import draw_cartesian_axes
 from src.general.draw_velocity_vectors import draw_velocity_vectors
 from src.general.suavizar_tabla import suavizar_curve_fit, suavizar_savitzky, graficar
 from procesar_choque import separar_datos_por_choque
-
+from combinar_tablas import combinar_tablas
+import os
 
 # Size of video window. Default = 1, but is very big
 # 0.55 for notebook
@@ -15,24 +16,31 @@ from procesar_choque import separar_datos_por_choque
 VIDEO_WINDOW_SIZE = 0.7 # NO CAMBIARLO PORQUE MODIFICA EL TAMAÑO DEL EJE DE COORDENADAS
 
 TRACKEO_ORIGINAL_BASKET = 'tablas/trackeo-original-basket.csv'
-TRACKEO_ORIGINAL_BASKET_ANTES = 'tablas/trackeo-original-basket_antes_de_choque.csv'
-TRACKEO_ORIGINAL_BASKET_DESPUES = 'tablas/trackeo-original-basket_despues_de_choque.csv'
+TRACKEO_ORIGINAL_BASKET_ANTES = 'tablas/trackeo-original-basket-antes-de-choque.csv'
+TRACKEO_ORIGINAL_BASKET_DESPUES = 'tablas/trackeo-original-basket-despues-de-choque.csv'
+
 TRACKEO_ORIGINAL_TENIS = 'tablas/trackeo-original-tenis.csv'
+TRACKEO_ORIGINAL_TENIS_ANTES = 'tablas/trackeo-original-tenis-antes-de-choque.csv'
+TRACKEO_ORIGINAL_TENIS_DESPUES = 'tablas/trackeo-original-tenis-despues-de-choque.csv'
 
 TRACKEO_ORIGINAL_BASKET_NUEVO_ORIGEN = 'tablas/trackeo-original-basket-nuevo-origen.csv'
 TRACKEO_ORIGINAL_TENIS_NUEVO_ORIGEN = 'tablas/trackeo-original-tenis-nuevo-origen.csv'
 
 TRACKEO_BASKET_ANTES_SUAVIZADO_CURVE_FIT = "tablas/trackeo-basket-antes-suavizado-curve-fit.csv"
 TRACKEO_BASKET_DESPUES_SUAVIZADO_CURVE_FIT = "tablas/trackeo-basket-despues-suavizado-curve-fit.csv"
-TRACKEO_BASKET_ANTES_SUAVIZADO_SAVITZKY = "tablas/trackeo-basket-antes-suavizado-savitzky.csv"
-TRACKEO_BASKET_DESPUES_SUAVIZADO_SAVITZKY = "tablas/trackeo-basket-despues-suavizado-savitzky.csv"
+TRACKEO_TENIS_ANTES_SUAVIZADO_CURVE_FIT = "tablas/trackeo-tenis-antes-suavizado-curve-fit.csv"
+TRACKEO_TENIS_DESPUES_SUAVIZADO_CURVE_FIT = "tablas/trackeo-tenis-despues-suavizado-curve-fit.csv"
 
-TRACKEO_SUAVIZADO_CURVE_FIT_NUEVO_ORIGEN = "tablas/trackeo-suavizado-curve-fit-nuevo-origen.csv"
-NOMBRE_GRAFICO_CURVE_FIT = "graficos/curve_fit.png"
 
-TRACKEO_SUAVIZADO_SAVITZKY = "tablas/trackeo-suavizado-savitzky.csv"
-TRACKEO_SUAVIZADO_SAVITZKY_NUEVO_ORIGEN = "tablas/trackeo-suavizado-savitzky-nuevo-origen.csv"
-NOMBRE_GRAFICO_SAVITZKY = "graficos/savitzky.png"
+#TRACKEO_BASKET_ANTES_SUAVIZADO_SAVITZKY = "tablas/trackeo-basket-antes-suavizado-savitzky.csv"
+#TRACKEO_BASKET_DESPUES_SUAVIZADO_SAVITZKY = "tablas/trackeo-basket-despues-suavizado-savitzky.csv"
+
+#TRACKEO_SUAVIZADO_CURVE_FIT_NUEVO_ORIGEN = "tablas/trackeo-suavizado-curve-fit-nuevo-origen.csv"
+#NOMBRE_GRAFICO_CURVE_FIT = "graficos/curve_fit.png"
+
+#TRACKEO_SUAVIZADO_SAVITZKY = "tablas/trackeo-suavizado-savitzky.csv"
+#TRACKEO_SUAVIZADO_SAVITZKY_NUEVO_ORIGEN = "tablas/trackeo-suavizado-savitzky-nuevo-origen.csv"
+#NOMBRE_GRAFICO_SAVITZKY = "graficos/savitzky.png"
 
 
 INPUT_VIDEO = "videos/input.MOV"
@@ -143,22 +151,38 @@ def process_video():
             time = round(point[2], 4)
             f.write(f"{x},{y},{time}\n")
 
+
+    # Cambio el origen del sistema de ejes cartesianas
+    cambiar_origen_a_coordenadas_especificas(TRACKEO_ORIGINAL_BASKET, 300, 750)
+    cambiar_origen_a_coordenadas_especificas(TRACKEO_ORIGINAL_TENIS, 300, 750)
+
     separar_datos_por_choque(TRACKEO_ORIGINAL_BASKET, 0.68)
     separar_datos_por_choque(TRACKEO_ORIGINAL_TENIS, 0.7)
 
-    # Cambio el origen del trackeo original
+    # Suavizo el trackeo
+    suavizar_curve_fit(TRACKEO_ORIGINAL_BASKET_ANTES, TRACKEO_BASKET_ANTES_SUAVIZADO_CURVE_FIT, "X_nuevo_origen", "Y_nuevo_origen")
+    suavizar_curve_fit(TRACKEO_ORIGINAL_BASKET_DESPUES, TRACKEO_BASKET_DESPUES_SUAVIZADO_CURVE_FIT, "X_nuevo_origen", "Y_nuevo_origen")
 
-    cambiar_origen_a_coordenadas_especificas(TRACKEO_ORIGINAL_BASKET, 300, 750)
+    suavizar_curve_fit(TRACKEO_ORIGINAL_TENIS_ANTES, TRACKEO_TENIS_ANTES_SUAVIZADO_CURVE_FIT, "X_nuevo_origen", "Y_nuevo_origen")
+    suavizar_curve_fit(TRACKEO_ORIGINAL_TENIS_DESPUES, TRACKEO_TENIS_DESPUES_SUAVIZADO_CURVE_FIT, "X_nuevo_origen", "Y_nuevo_origen")
 
-    # Suavizo el trackeo original
-    suavizar_curve_fit(TRACKEO_ORIGINAL_BASKET_ANTES, TRACKEO_BASKET_ANTES_SUAVIZADO_CURVE_FIT)
-    suavizar_curve_fit(TRACKEO_ORIGINAL_BASKET_DESPUES, TRACKEO_BASKET_DESPUES_SUAVIZADO_CURVE_FIT)
+    combinar_tablas(TRACKEO_ORIGINAL_BASKET_ANTES, TRACKEO_BASKET_ANTES_SUAVIZADO_CURVE_FIT)
+    combinar_tablas(TRACKEO_ORIGINAL_BASKET_DESPUES, TRACKEO_BASKET_DESPUES_SUAVIZADO_CURVE_FIT)
+    combinar_tablas(TRACKEO_ORIGINAL_TENIS_ANTES, TRACKEO_TENIS_ANTES_SUAVIZADO_CURVE_FIT)
+    combinar_tablas(TRACKEO_ORIGINAL_TENIS_DESPUES, TRACKEO_TENIS_DESPUES_SUAVIZADO_CURVE_FIT)
 
-    #suavizar_curve_fit(TRACKEO_ORIGINAL_BASKET, TRACKEO_SUAVIZADO_CURVE_FIT)
+    # Limpieza
+    os.remove(TRACKEO_ORIGINAL_BASKET)
+    os.remove(TRACKEO_BASKET_ANTES_SUAVIZADO_CURVE_FIT)
+    os.remove(TRACKEO_BASKET_DESPUES_SUAVIZADO_CURVE_FIT)
+    os.rename(TRACKEO_ORIGINAL_BASKET_ANTES, "tablas/trackeo-basket-antes-de-choque.csv")
+    os.rename(TRACKEO_ORIGINAL_BASKET_DESPUES, "tablas/trackeo-basket-despues-de-choque.csv")
 
-    # Cambio el origen de los trackeos suavizados
-    #change_origin_trackeo(TRACKEO_SUAVIZADO_CURVE_FIT, TRACKEO_SUAVIZADO_CURVE_FIT_NUEVO_ORIGEN)
-    #change_origin_trackeo(TRACKEO_SUAVIZADO_SAVITZKY, TRACKEO_SUAVIZADO_SAVITZKY_NUEVO_ORIGEN)
+    os.remove(TRACKEO_ORIGINAL_TENIS)
+    os.remove(TRACKEO_TENIS_ANTES_SUAVIZADO_CURVE_FIT)
+    os.remove(TRACKEO_TENIS_DESPUES_SUAVIZADO_CURVE_FIT)
+    os.rename(TRACKEO_ORIGINAL_TENIS_ANTES, "tablas/trackeo-tenis-antes-de-choque.csv")
+    os.rename(TRACKEO_ORIGINAL_TENIS_DESPUES, "tablas/trackeo-tenis-despues-de-choque.csv")
 
     # Grafico el trackeo original y el suavizado (ambos con el nuevo origen)
     #graficar(TRACKEO_ORIGINAL_NUEVO_ORIGEN, TRACKEO_SUAVIZADO_CURVE_FIT_NUEVO_ORIGEN, NOMBRE_GRAFICO_CURVE_FIT)
