@@ -160,11 +160,11 @@ def process_video():
     separar_datos_por_choque(TRACKEO_ORIGINAL_TENIS, 0.7)
 
     # Suavizo el trackeo
-    suavizar_curve_fit(TRACKEO_ORIGINAL_BASKET_ANTES, TRACKEO_BASKET_ANTES_SUAVIZADO_CURVE_FIT, "X_nuevo_origen", "Y_nuevo_origen")
-    suavizar_curve_fit(TRACKEO_ORIGINAL_BASKET_DESPUES, TRACKEO_BASKET_DESPUES_SUAVIZADO_CURVE_FIT, "X_nuevo_origen", "Y_nuevo_origen")
+    suavizar_curve_fit(TRACKEO_ORIGINAL_BASKET_ANTES, TRACKEO_BASKET_ANTES_SUAVIZADO_CURVE_FIT, "X_nuevo_origen", "Y_nuevo_origen", csv_errores='tablas/error_curve_fit_basket_antes.csv')
+    suavizar_curve_fit(TRACKEO_ORIGINAL_BASKET_DESPUES, TRACKEO_BASKET_DESPUES_SUAVIZADO_CURVE_FIT, "X_nuevo_origen", "Y_nuevo_origen", csv_errores='tablas/error_curve_fit_basket_despues.csv')
 
-    suavizar_curve_fit(TRACKEO_ORIGINAL_TENIS_ANTES, TRACKEO_TENIS_ANTES_SUAVIZADO_CURVE_FIT, "X_nuevo_origen", "Y_nuevo_origen")
-    suavizar_curve_fit(TRACKEO_ORIGINAL_TENIS_DESPUES, TRACKEO_TENIS_DESPUES_SUAVIZADO_CURVE_FIT, "X_nuevo_origen", "Y_nuevo_origen")
+    suavizar_curve_fit(TRACKEO_ORIGINAL_TENIS_ANTES, TRACKEO_TENIS_ANTES_SUAVIZADO_CURVE_FIT, "X_nuevo_origen", "Y_nuevo_origen", csv_errores='tablas/error_curve_fit_tenis_antes.csv')
+    suavizar_curve_fit(TRACKEO_ORIGINAL_TENIS_DESPUES, TRACKEO_TENIS_DESPUES_SUAVIZADO_CURVE_FIT, "X_nuevo_origen", "Y_nuevo_origen", csv_errores='tablas/error_curve_fit_tenis_despues.csv')
 
     combinar_tablas(TRACKEO_ORIGINAL_BASKET_ANTES, TRACKEO_BASKET_ANTES_SUAVIZADO_CURVE_FIT)
     combinar_tablas(TRACKEO_ORIGINAL_BASKET_DESPUES, TRACKEO_BASKET_DESPUES_SUAVIZADO_CURVE_FIT)
