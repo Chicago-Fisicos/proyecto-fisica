@@ -10,7 +10,7 @@ def func(x, a, b, c):
     return a * x ** 2 + b * x + c
 
 
-def suavizar_curve_fit(csv_original, csv_suavizado, eje_x='X', eje_y='Y'):
+def suavizar_curve_fit(csv_original, csv_suavizado, eje_x='X', eje_y='Y', csv_errores='tablas/error_segun_curve_fit.csv'):
     # Leer el archivo CSV
     df = pd.read_csv(csv_original)
 
@@ -45,16 +45,19 @@ def suavizar_curve_fit(csv_original, csv_suavizado, eje_x='X', eje_y='Y'):
     # Guardar la nueva tabla en un archivo CSV
     df_suavizado.to_csv(csv_suavizado, index=False)
 
-    print("Resultados del ajuste con curve fit:")
-    print("  Resultados del ajuste para X:")
-    print(f"    a = {params_x[0]:.6f} ± {errors_x[0]:.6f} (El parámetro cuadrático de la función de ajuste)")
-    print(f"    b = {params_x[1]:.6f} ± {errors_x[1]:.6f} (El parámetro lineal de la función de ajuste)")
-    print(f"    c = {params_x[2]:.6f} ± {errors_x[2]:.6f} (El término constante de la función de ajuste)\n")
+    # Crear una tabla con los datos de los errores
+    df_errores = pd.DataFrame({
+        'Parámetro': ['a', 'b', 'c'],
+        'X (Valor)': np.round([params_x[0], params_x[1], params_x[2]], 6),
+        'X (Error)': np.round([errors_x[0], errors_x[1], errors_x[2]], 6),
+        'Y (Valor)': np.round([params_y[0], params_y[1], params_y[2]], 6),
+        'Y (Error)': np.round([errors_y[0], errors_y[1], errors_y[2]], 6)
+    })
 
-    print("  Resultados del ajuste para Y:")
-    print(f"    a = {params_y[0]:.6f} ± {errors_y[0]:.6f} (El parámetro cuadrático de la función de ajuste)")
-    print(f"    b = {params_y[1]:.6f} ± {errors_y[1]:.6f} (El parámetro lineal de la función de ajuste)")
-    print(f"    c = {params_y[2]:.6f} ± {errors_y[2]:.6f} (El término constante de la función de ajuste)\n")
+    # Guardar las tablas en archivos CSV
+    df_suavizado.to_csv(csv_suavizado, index=False)
+    df_errores.to_csv(csv_errores, index=False)
+
 
 
 def suavizar_savitzky(csv_original, csv_suavizado):
