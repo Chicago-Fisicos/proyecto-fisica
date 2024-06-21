@@ -4,26 +4,27 @@ from scipy.signal import find_peaks
 import wave
 
 
-def main(ruta_archivo):
+def main(ruta_archivo, ruta_archivo_csv, ruta_grafico):
     # Cargar el archivo de audio
     audio, tasa_muestreo = cargar_audio(ruta_archivo)
-
-    # Normalizar el audio (opcional, dependiendo del caso)
-    # audio = audio / np.max(np.abs(audio))
 
     # Obtener el envolvente del audio para detectar los picos
     envolvente = np.abs(audio)
 
     # Detectar los picos (momentos de impacto)
-    umbral_minimo_picos = 1000
+    umbral_minimo_picos = 500
     picos, _ = find_peaks(envolvente, height=umbral_minimo_picos, distance=int(tasa_muestreo * 0.1))
 
     # Convertir los picos a tiempos en segundos
     tiempos = picos / tasa_muestreo
 
-    graficar(audio, envolvente, picos, tasa_muestreo, tiempos)
+    # Guardar los tiempos en un archivo CSV con 6 decimales
+    np.savetxt(ruta_archivo_csv, tiempos, delimiter=',', fmt='%.6f')
+
+    graficar(audio, envolvente, picos, tasa_muestreo, tiempos, ruta_grafico)
 
     coeficiente_de_restitucion(tiempos)
+
 
 
 def cargar_audio(ruta_archivo):
@@ -35,13 +36,17 @@ def cargar_audio(ruta_archivo):
     return audio, tasa_muestreo
 
 
-def graficar(audio, envolvente, picos, tasa_muestreo, tiempos):
+def graficar(audio, envolvente, picos, tasa_muestreo, tiempos, ruta_grafico):
     plt.figure(figsize=(14, 5))
     plt.plot(np.linspace(0, len(audio) / tasa_muestreo, len(audio)), envolvente)
     plt.plot(tiempos, envolvente[picos], "x")
     plt.xlabel('Tiempo (s)')
     plt.ylabel('Amplitud')
     plt.title('Detección de picos en el audio')
+
+    # Guardar la imagen del gráfico antes de mostrarla
+    plt.savefig(ruta_grafico)
+
     plt.show()
 
 
@@ -61,5 +66,7 @@ def coeficiente_de_restitucion(tiempos):
 
 
 if __name__ == "__main__":
-    ruta_audio = '../audios/Golf2.wav'
-    main(ruta_audio)
+    ruta_audio = '../audios/videos-y-audios/input.wav'
+    ruta_archivo_csv = '../audios/tablas/tiempos_rebote.csv'
+    ruta_grafico = '../audios/graficos/grafico_picos.png'
+    main(ruta_audio, ruta_archivo_csv, ruta_grafico)
