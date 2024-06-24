@@ -1,6 +1,7 @@
 import pandas as pd
 import matplotlib.pyplot as plt
-import math
+import plotly.express as px
+import numpy as np
 
 #variables
 RUTA_CSV = "../basket-doble/tablas/trackeo-suavizado-curve-fit-nuevo-origen.csv"
@@ -316,11 +317,39 @@ def generar_posicion_y_teorica(tabla):
 
     return tabla_nueva
 
+def energia_cinetica(tabla):
+    velocidad_x : float = pd.to_numeric(tabla["velocityX"], errors="coerce")
+    velocidad_y : float = pd.to_numeric(tabla["velocityY"], errors="coerce")
+
+    return 0.5 * 0.6 * ((np.sqrt(velocidad_x** 2 + velocidad_y ** 2)) ** 2)
+
+def energia_potencial(tabla):
+    pos_y : float = pd.to_numeric(tabla["Y"], errors="coerce")
+    return 9.8 * 0.6 * pos_y
+
+def generar_datos_energia(tabla):
+    tabla_nueva = tabla.copy()
+    tabla_nueva["Energia_cinetica"] = energia_cinetica(tabla_nueva)
+    tabla_nueva["Energia_potencial"] = energia_potencial(tabla_nueva)
+    tabla_nueva["Energia_mecanica"] = tabla_nueva["Energia_cinetica"] + tabla_nueva["Energia_potencial"]
+    return tabla_nueva
+
+def graficar_energia(tabla):
+    # Crear una figura con dos líneas para representar las energías
+    fig = px.line(tabla_movimiento, x="Time", y=["Energia_cinetica", "Energia_potencial", "Energia_mecanica"],
+                  labels={"value": "Energía", "variable": "Tipo de Energía"},
+                  title="Cambio de Energía Cinética y Potencial en el Tiempo")
+
+    # Personalizar el gráfico (opcional)
+    fig.update_traces(mode="lines+markers")
+    fig.update_layout(xaxis_title="Tiempo (s)", yaxis_title="Energía (J)")
+    fig.show()
+
 ##################################################
 #           EJEMPLO DE EJECUCION                 #
 ##################################################
 
-#leor el csv
+#Importar datos de csv
 tabla_movimiento = pd.read_csv(RUTA_CSV)
 
 #agregar datos de movimiento a la tabla
@@ -339,6 +368,13 @@ graficar_aceleracion_tiempo(tabla_movimiento, "Y",1,1)
 #graficar posicion de x respecto a y
 graficar_posicion_xy(tabla_movimiento,1,1)
 
+#generar datos de energia
+tabla_movimiento = generar_datos_energia(tabla_movimiento)
+
+#graficar energia
+graficar_energia(tabla_movimiento)
+
+#exportar a csv
 tabla_movimiento.to_csv(RUTA_OUTPUT_CSV)
 
 
