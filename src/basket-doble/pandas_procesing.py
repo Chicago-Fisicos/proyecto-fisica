@@ -1,12 +1,11 @@
 import pandas as pd
 import matplotlib.pyplot as plt
-import plotly.express as px
 import numpy as np
 
 #variables
-RUTA_CSV = "../basket-doble/tablas/trackeo-suavizado-curve-fit-nuevo-origen.csv"
-RUTA_OUTPUT_CSV = "./output.csv"
-RUTA_CARPETA_IMAGENES = "./graficas/" #Si esta carpeta no existe da error
+RUTA_CSV = "tablas/trackeo-suavizado-curve-fit-nuevo-origen.csv"
+RUTA_OUTPUT_CSV = "tablas/tabla-moviento-metros.csv"
+RUTA_CARPETA_IMAGENES = "graficos/" #Si esta carpeta no existe da error
 
 ### este valor se calcula a partir comparar la medida de un objeto en el video y en la realidad
 ### debe ser calculado para cada video
@@ -89,9 +88,12 @@ def graficar_velocidad_tiempo(tabla, coordenada, guardar_grafica=None, mostrar_g
 
     vel_coor = "velocity" + coordenada
     velocidad = tabla[vel_coor].iloc[1:]
+    velocidad_teorica = tabla["vel_"+coordenada+"_teorica"].iloc[1:]
     tiempo = tabla["Time"].iloc[1:]
     # tipo de grafico y variables a usar
-    plt.scatter(tiempo, velocidad)
+    fig , ax = plt.subplots()
+    ax.plot(tiempo, velocidad_teorica, color="blue", label="teorica")
+    ax.scatter(tiempo, velocidad, color="red", label="real")
     # etiquetas
     plt.xlabel('tiempo (segundos)')
     plt.ylabel('velocidad (m/s)')
@@ -118,9 +120,13 @@ def graficar_posicion_tiempo(tabla, coordenada, guardar_grafica=None, mostrar_gr
         None
     """
     posicion = tabla[coordenada]
+    posicion_teorica = tabla["pos_"+coordenada+"_teorica"]
     tiempo = tabla["Time"]
     # tipo de grafico y variables a usar
-    plt.scatter(tiempo, posicion)
+    fig, ax = plt.subplots()
+    ax.plot(tiempo, posicion_teorica, color='blue', label='teorica')
+    ax.scatter(tiempo, posicion, color='red', label='real')
+    ax.legend()
     # etiquetas
     plt.xlabel('tiempo (segundos)')
     plt.ylabel('posicion (m)')
@@ -148,9 +154,12 @@ def graficar_aceleracion_tiempo(tabla, coordenada, guardar_grafica=None, mostrar
     """
     accCoor = "acceleration" + coordenada
     aceleracion = tabla[accCoor].iloc[2:]
+    aceleracion_teorica = tabla["acc_"+coordenada+"_teorica"].iloc[2:]
     tiempo = tabla["Time"].iloc[2:]
+    fig, ax = plt.subplots()
     # tipo de grafico y variables a usar
-    plt.plot(tiempo, aceleracion)
+    ax.plot(tiempo, aceleracion_teorica, color="blue", label="teorica")
+    ax.scatter(tiempo, aceleracion, color="red", label="real")
     # etiquetas
     plt.xlabel('tiempo (segundos)')
     plt.ylabel('aceleracion (m/s^2)')
@@ -174,10 +183,11 @@ def graficar_posicion_xy(tabla, guardar_grafica=None, mostrar_grafica=None):
     Returns:
         None
     """
+    fig, ax = plt.subplots()
 
     # tipo de grafico y variables a usar
-    plt.plot(tabla["X"], tabla["Y"])
-    # etiquetas
+    ax.plot(tabla["X"], tabla["Y"], color="red", label="real")
+    ax.plot(tabla["pos_X_teorica"], tabla["pos_Y_teorica"], color="blue", label="teorica")    # etiquetas
     plt.xlabel('posicion en el eje X (m)')
     plt.ylabel('posicion en el eje Y (m)')
     # titulo
@@ -202,7 +212,6 @@ def agregar_datos_movimiento(tabla):
     tabla_nueva["velocityX"] = calcular_velocidad(tabla_nueva, "X")
     tabla_nueva["velocityY"] = calcular_velocidad(tabla_nueva, "Y")
     tabla_nueva["accelerationY"] = calcular_aceleracion(tabla_nueva, "Y")
-    tabla_nueva["accelerationX"] = calcular_aceleracion(tabla_nueva, "X")
 
     return tabla_nueva
 
@@ -314,7 +323,7 @@ def generar_datos_y_teorica(tabla):
     tiempo = tabla_nueva["Time"] - tabla_nueva["Time"].iloc[0]
     tabla_nueva["pos_Y_teorica"] = calcular_posicion_y(y_inicial, v_inicial, tiempo)
     tabla_nueva["vel_Y_teorica"] = calcular_velocidad_y(v_inicial, tiempo)
-    tabla_nueva["acc_Y_teorica"] = 9.81
+    tabla_nueva["acc_Y_teorica"] = -9.81
 
     return tabla_nueva
 
@@ -335,48 +344,60 @@ def generar_datos_energia(tabla):
     tabla_nueva["Energia_mecanica"] = tabla_nueva["Energia_cinetica"] + tabla_nueva["Energia_potencial"]
     return tabla_nueva
 
-def graficar_energia(tabla):
+def graficar_energia(tabla,guardar_grafica=None, mostrar_grafica=None):
+
     # Crear una figura con dos líneas para representar las energías
-    fig = px.line(tabla_movimiento.iloc[1:], x="Time", y=["Energia_cinetica", "Energia_potencial", "Energia_mecanica"],
-                  labels={"value": "Energía", "variable": "Tipo de Energía"},
-                  title="Cambio de Energía Cinética y Potencial en el Tiempo")
+    fig, ax = plt.subplots()
 
-    # Personalizar el gráfico (opcional)
-    fig.update_traces(mode="lines+markers")
-    fig.update_layout(xaxis_title="Tiempo (s)", yaxis_title="Energía (J)")
-    fig.show()
+    tiempo = tabla["Time"].iloc[1:]
+    cinetica = tabla["Energia_cinetica"].iloc[1:]
+    potencial = tabla["Energia_potencial"].iloc[1:]
+    mecanica = tabla["Energia_mecanica"].iloc[1:]
 
-##################################################
-#           EJEMPLO DE EJECUCION                 #
-##################################################
+    ax.plot(tiempo, cinetica, color="blue", label="Energía cinetica")
+    ax.plot(tiempo, potencial, color="red", label="Energía potencial")
+    ax.plot(tiempo, mecanica, color="green", label="Energía mecanica")
 
-#Importar datos de csv
-tabla_movimiento = pd.read_csv(RUTA_CSV)
+    ax.legend()
 
-#agregar datos de movimiento a la tabla
-tabla_movimiento = generar_datos_movimiento_metros(tabla_movimiento)
+    plt.xlabel("Tiempo (s)")
+    plt.ylabel("Energía (J)")
 
-#graficos de la coordenada x
-graficar_posicion_tiempo(tabla_movimiento, "X",1,1)
-graficar_velocidad_tiempo(tabla_movimiento, "X",1,1)
-graficar_aceleracion_tiempo(tabla_movimiento, "X",1,1)
+    plt.title("Cambio de Energía en el Tiempo")
 
-#graficos de la coordenada y
-graficar_posicion_tiempo(tabla_movimiento, "Y",1,1)
-graficar_velocidad_tiempo(tabla_movimiento, "Y",1,1)
-graficar_aceleracion_tiempo(tabla_movimiento, "Y",1,1)
+    # Mostrar la figura
+    if mostrar_grafica:
+        plt.show()
+    if guardar_grafica:
+        plt.savefig(RUTA_CARPETA_IMAGENES + "energia_mecanica.png")
 
-#graficar posicion de x respecto a y
-graficar_posicion_xy(tabla_movimiento,1,1)
 
-#generar datos de energia
-tabla_movimiento = generar_datos_energia(tabla_movimiento)
+def main():
+    ##################################################
+    #           EJEMPLO DE EJECUCION                 #
+    ##################################################
+    # Importar datos de csv
+    tabla_movimiento = pd.read_csv(RUTA_CSV)
+    # agregar datos de movimiento a la tabla
+    tabla_movimiento = generar_datos_movimiento_metros(tabla_movimiento)
+    # graficos de la coordenada x
+    graficar_posicion_tiempo(tabla_movimiento, "X", 1, 1)
+    graficar_velocidad_tiempo(tabla_movimiento, "X", 1, 1)
+    # graficos de la coordenada y
+    graficar_posicion_tiempo(tabla_movimiento, "Y", 1, 1)
+    graficar_velocidad_tiempo(tabla_movimiento, "Y", 1, 1)
+    graficar_aceleracion_tiempo(tabla_movimiento, "Y", 1, 1)
+    # graficar posicion de x respecto a y
+    graficar_posicion_xy(tabla_movimiento, 1, 1)
+    # generar datos de energia
+    tabla_movimiento = generar_datos_energia(tabla_movimiento)
+    # graficar energia
+    graficar_energia(tabla_movimiento, 1, 1)
+    # exportar a csv
+    tabla_movimiento.to_csv(RUTA_OUTPUT_CSV)
 
-#graficar energia
-graficar_energia(tabla_movimiento)
-
-#exportar a csv
-tabla_movimiento.to_csv(RUTA_OUTPUT_CSV)
+if __name__ == "__main__":
+    main()
 
 
 
