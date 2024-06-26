@@ -206,6 +206,13 @@ def agregar_datos_movimiento(tabla):
 
     return tabla_nueva
 
+def generar_datos_teoricos(tabla):
+    tabla_nueva = tabla.copy()
+    tabla_nueva = generar_datos_x_teorica(tabla_nueva)
+    tabla_nueva = generar_datos_y_teorica(tabla_nueva)
+
+    return tabla_nueva
+
 def generar_datos_movimiento_metros(tabla):
     """
     Genera nuevos datos para el movimiento en metros.
@@ -221,8 +228,7 @@ def generar_datos_movimiento_metros(tabla):
     tabla_nueva["Y"] = tabla_nueva["Y"].apply(parsear_a_metros)
     tabla_nueva = agregar_datos_movimiento(tabla_nueva)
 
-    tabla_nueva =  generar_posicion_x_teorica(tabla_nueva)
-    tabla_nueva =  generar_posicion_y_teorica(tabla_nueva)
+    tabla_nueva =  generar_datos_teoricos(tabla_nueva)
     return tabla_nueva
 
 def velocidad_inicial_x_teorica(tabla):
@@ -252,7 +258,7 @@ def velocidad_inicial_y_teorica(tabla):
     t = tabla["Time"].iloc[-1] - tabla["Time"].iloc[0]
     y_final = tabla["Y"].iloc[-1]
     y_inicial = tabla["Y"].iloc[0]
-    g = 9.8
+    g = 9.81
 
     return (y_final - y_inicial + g * (t ** 2) * 0.5)/t
 
@@ -282,40 +288,33 @@ def calcular_posicion_y(y_inicial, v_inicial, t):
     Returns:
         float: La posición en el eje x después del tiempo t.
     """
-    g = 9.8
+    g = 9.81
     return (y_inicial + v_inicial * t - 0.5 * g * (t ** 2)).round(6)
 
-def generar_posicion_x_teorica(tabla):
-    """
-    Agrega a la tabla la posición en el eje x teórico.
-
-    Args:
-        tabla (pandas.DataFrame): La tabla de datos.
-
-    Returns:
-        tabla (pandas.DataFrame): La tabla de datos con la columna "X_teorica" .
-    """
+def generar_datos_x_teorica(tabla):
     tabla_nueva = tabla.copy()
     x_inicial = tabla_nueva["X"].iloc[0]
     v_inicial = velocidad_inicial_x_teorica(tabla_nueva)
-    tabla_nueva["X_teorica"] = tabla_nueva["Time"].apply(lambda t: calcular_posicion_x(x_inicial, v_inicial, t))
+    tiempo = tabla_nueva["Time"]-tabla_nueva["Time"].iloc[0]
+    tabla_nueva["pos_X_teorica"] = calcular_posicion_x(x_inicial, v_inicial, tiempo)
+    tabla_nueva["vel_X_teorica"] = v_inicial
+
 
     return tabla_nueva
 
-def generar_posicion_y_teorica(tabla):
-    """
-    Agrega a la tabla la posicion en el eje y teórica.
 
-    Args:
-        tabla (pandas.DataFrame): La tabla de datos.
+def calcular_velocidad_y(v_inicial, tiempo):
+    return (v_inicial - 9.81 * tiempo).round(6)
 
-    Returns:
-        tabla (pandas.DataFrame): La tabla de datos con la columna "Y_teorica" .
-    """
+
+def generar_datos_y_teorica(tabla):
     tabla_nueva = tabla.copy()
     y_inicial = tabla_nueva["Y"].iloc[0]
     v_inicial = velocidad_inicial_y_teorica(tabla_nueva)
-    tabla_nueva["Y_teorica"] = tabla_nueva["Time"].apply(lambda t: calcular_posicion_y(y_inicial, v_inicial, t))
+    tiempo = tabla_nueva["Time"] - tabla_nueva["Time"].iloc[0]
+    tabla_nueva["pos_Y_teorica"] = calcular_posicion_y(y_inicial, v_inicial, tiempo)
+    tabla_nueva["vel_Y_teorica"] = calcular_velocidad_y(v_inicial, tiempo)
+    tabla_nueva["acc_Y_teorica"] = 9.81
 
     return tabla_nueva
 
@@ -327,7 +326,7 @@ def energia_cinetica(tabla):
 
 def energia_potencial(tabla):
     pos_y : float = pd.to_numeric(tabla["Y"], errors="coerce")
-    return 9.8 * 0.6 * pos_y
+    return 9.81 * 0.6 * pos_y
 
 def generar_datos_energia(tabla):
     tabla_nueva = tabla.copy()

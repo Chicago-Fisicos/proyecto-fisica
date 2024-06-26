@@ -61,12 +61,15 @@ def coeficiente_de_restitucion(tiempos):
     for i in range(1, rebotes):
         t1 = tiempos[i - 1]
         t2 = tiempos[i]
-        v_antes_rebote.append(9.8 * (t2 - (t2/2)))
-        v_despues_rebote.append(9.8 * ((t2/2) - t1))
+        v_antes_rebote.append(9.81 * (t2 - (t2/2)))
+        v_despues_rebote.append(9.81 * ((t2/2) - t1))
+
     for i in range(1, rebotes-1):
         coef = v_despues_rebote[i] / v_antes_rebote[i]
         coeficientes.append(coef)
     # Promedio del coeficiente de restitución
+
+    coeficientes.pop(0)
     coef_restitucion_promedio = np.mean(coeficientes)
     print(f'coeficientes: {coeficientes}')
     print(f'Número de rebotes detectados: {rebotes}')
