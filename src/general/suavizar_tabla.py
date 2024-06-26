@@ -106,7 +106,7 @@ def suavizar_savitzky(csv_original, csv_suavizado):
     print(f"Error estándar de los valores suavizados para Y: {error_std_Y:.6f}")
 
 
-def graficar(csv_original, csv_suavizado, nombre_archivo="grafico.png"):
+def graficar(csv_original, csv_suavizado, nombre_archivo="grafico.png", titulo="Grafico"):
     # Leer los archivos CSV
     df1 = pd.read_csv(csv_original)
     df2 = pd.read_csv(csv_suavizado)
@@ -123,7 +123,7 @@ def graficar(csv_original, csv_suavizado, nombre_archivo="grafico.png"):
     # Etiquetas y título
     plt.xlabel('X')
     plt.ylabel('Y')
-    plt.title('Gráfico de X e Y para ambos archivos')
+    plt.title(titulo)
     plt.legend()
 
     # Guardar la gráfica como una imagen

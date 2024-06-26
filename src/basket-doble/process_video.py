@@ -129,6 +129,7 @@ def process_video():
             # Draw acceleration vectors
             draw_acceleration_vectors(img, trackeo_suavizado_list)
 
+
         # Guarda video nuevo
         out.write(img)
 
@@ -162,8 +163,14 @@ def process_video():
     change_origin_trackeo(TRACKEO_SUAVIZADO_SAVITZKY, TRACKEO_SUAVIZADO_SAVITZKY_NUEVO_ORIGEN)
 
     # Grafico el trackeo original y el suavizado (ambos con el nuevo origen)
-    graficar(TRACKEO_ORIGINAL_NUEVO_ORIGEN, TRACKEO_SUAVIZADO_CURVE_FIT_NUEVO_ORIGEN, NOMBRE_GRAFICO_CURVE_FIT)
-    graficar(TRACKEO_ORIGINAL_NUEVO_ORIGEN, TRACKEO_SUAVIZADO_SAVITZKY_NUEVO_ORIGEN, NOMBRE_GRAFICO_SAVITZKY)
+    graficar(TRACKEO_ORIGINAL_NUEVO_ORIGEN,
+             TRACKEO_SUAVIZADO_CURVE_FIT_NUEVO_ORIGEN,
+             NOMBRE_GRAFICO_CURVE_FIT,
+             "Grafico de datos originales y ajustados con Curve fit")
+    graficar(TRACKEO_ORIGINAL_NUEVO_ORIGEN,
+             TRACKEO_SUAVIZADO_SAVITZKY_NUEVO_ORIGEN,
+             NOMBRE_GRAFICO_SAVITZKY,
+             "Grafico de datos originales y suavizados con Savitzky Golay")
 
     # Release video resources
     out.release()
