@@ -394,13 +394,9 @@ def main():
     # graficar energia
     graficar_energia(tabla_movimiento, 1, 1)
     # exportar a csv
-    tabla_movimiento.to_csv(RUTA_OUTPUT_CSV)
+    tabla_movimiento = tabla_movimiento.round(6)
+    tabla_movimiento.to_csv(RUTA_OUTPUT_CSV, index=False)
 
 if __name__ == "__main__":
     main()
-
-
-
-
-
 
