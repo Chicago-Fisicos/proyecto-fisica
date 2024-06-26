@@ -307,8 +307,6 @@ def generar_datos_x_teorica(tabla):
     tiempo = tabla_nueva["Time"]-tabla_nueva["Time"].iloc[0]
     tabla_nueva["pos_X_teorica"] = calcular_posicion_x(x_inicial, v_inicial, tiempo)
     tabla_nueva["vel_X_teorica"] = v_inicial
-
-
     return tabla_nueva
 
 
@@ -369,7 +367,7 @@ def graficar_energia(tabla,guardar_grafica=None, mostrar_grafica=None):
     if mostrar_grafica:
         plt.show()
     if guardar_grafica:
-        plt.savefig(RUTA_CARPETA_IMAGENES + "energia_mecanica.png")
+        fig.savefig(RUTA_CARPETA_IMAGENES + "energia_mecanica.png")
 
 
 def main():
