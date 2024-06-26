@@ -221,6 +221,8 @@ def generar_datos_movimiento_metros(tabla):
     tabla_nueva["Y"] = tabla_nueva["Y"].apply(parsear_a_metros)
     tabla_nueva = agregar_datos_movimiento(tabla_nueva)
 
+    tabla_nueva =  generar_posicion_x_teorica(tabla_nueva)
+    tabla_nueva =  generar_posicion_y_teorica(tabla_nueva)
     return tabla_nueva
 
 def velocidad_inicial_x_teorica(tabla):
@@ -265,7 +267,7 @@ def calcular_posicion_x(x_inicial, v_inicial, t):
         Returns:
             float: La posición en el eje x después del tiempo t.
         """
-    return x_inicial + v_inicial * t
+    return (x_inicial + v_inicial * t).round(6)
 
 def calcular_posicion_y(y_inicial, v_inicial, t):
     """
@@ -281,7 +283,7 @@ def calcular_posicion_y(y_inicial, v_inicial, t):
         float: La posición en el eje x después del tiempo t.
     """
     g = 9.8
-    return y_inicial + v_inicial * t - 0.5 * g * (t ** 2)
+    return (y_inicial + v_inicial * t - 0.5 * g * (t ** 2)).round(6)
 
 def generar_posicion_x_teorica(tabla):
     """
@@ -336,7 +338,7 @@ def generar_datos_energia(tabla):
 
 def graficar_energia(tabla):
     # Crear una figura con dos líneas para representar las energías
-    fig = px.line(tabla_movimiento, x="Time", y=["Energia_cinetica", "Energia_potencial", "Energia_mecanica"],
+    fig = px.line(tabla_movimiento.iloc[1:], x="Time", y=["Energia_cinetica", "Energia_potencial", "Energia_mecanica"],
                   labels={"value": "Energía", "variable": "Tipo de Energía"},
                   title="Cambio de Energía Cinética y Potencial en el Tiempo")
 
