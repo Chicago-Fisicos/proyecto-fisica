@@ -133,7 +133,7 @@ def graficar_posicion_tiempo(tabla, coordenada, guardar_grafica=None, mostrar_gr
     plt.ylabel('posicion (m)')
     # titulo
     plt.title('posicion en '+coordenada+' en el tiempo')
-    #plt.ylim(-1, 5)
+
 
     if guardar_grafica:
         plt.savefig(RUTA_CARPETA_IMAGENES + "posicion_tiempo_" + coordenada + ".png")
@@ -168,7 +168,7 @@ def graficar_aceleracion_tiempo(tabla, coordenada, guardar_grafica=None, mostrar
     plt.ylabel('aceleracion (m/s^2)')
     # titulo
     plt.title('aceleracion en '+coordenada+' en el tiempo')
-
+    plt.ylim(-11, -8)
     if guardar_grafica:
         plt.savefig(RUTA_CARPETA_IMAGENES + "aceleracion_tiempo_" + coordenada + ".png")
     if mostrar_grafica:
@@ -321,7 +321,8 @@ def generar_datos_y_teorica(tabla):
     tabla_nueva = tabla.copy()
     y_inicial = tabla_nueva["Y"].iloc[0]
     v_inicial = velocidad_inicial_y_teorica(tabla_nueva)
-    tiempo = tabla_nueva["Time"] - tabla_nueva["Time"].iloc[0]
+    tiempo = (tabla_nueva["Time"]
+              - tabla_nueva["Time"].iloc[0])
     tabla_nueva["pos_Y_teorica"] = calcular_posicion_y(y_inicial, v_inicial, tiempo)
     tabla_nueva["vel_Y_teorica"] = calcular_velocidad_y(v_inicial, tiempo)
     tabla_nueva["acc_Y_teorica"] = -9.81
