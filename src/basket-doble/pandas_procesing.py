@@ -72,7 +72,8 @@ def calcular_aceleracion(tabla, columna):
     return aceleracion
 
 
-def graficar_velocidad_tiempo(tabla, coordenada, guardar_grafica=None, mostrar_grafica=None):
+def graficar_velocidad_tiempo(tabla, coordenada, guardar_grafica=None, mostrar_grafica=None,
+                              limy1=None, limy2=None):
     """
     Genera un gráfico de dispersión de velocidad contra tiempo para una coordenada dada.
 
@@ -101,6 +102,8 @@ def graficar_velocidad_tiempo(tabla, coordenada, guardar_grafica=None, mostrar_g
     # titulo
     plt.title('velocidad en '+coordenada+' en el tiempo')
 
+    if (limy1  and limy2):
+        plt.ylim(limy1, limy2)
     if guardar_grafica:
         plt.savefig(RUTA_CARPETA_IMAGENES + "velocidad_tiempo_" + coordenada + ".png")
     if mostrar_grafica:
@@ -387,7 +390,7 @@ def main():
     tabla_movimiento = generar_datos_movimiento_metros(tabla_movimiento)
     # graficos de la coordenada x
     graficar_posicion_tiempo(tabla_movimiento, "X", 1, MOSTRAR_GRAFICOS)
-    graficar_velocidad_tiempo(tabla_movimiento, "X", 1, MOSTRAR_GRAFICOS)
+    graficar_velocidad_tiempo(tabla_movimiento, "X", 1, MOSTRAR_GRAFICOS,3.8, 4.15)
     # graficos de la coordenada y
     graficar_posicion_tiempo(tabla_movimiento, "Y", 1, MOSTRAR_GRAFICOS)
     graficar_velocidad_tiempo(tabla_movimiento, "Y", 1, MOSTRAR_GRAFICOS)
