@@ -340,7 +340,9 @@ def energia_cinetica(tabla):
 
 def energia_potencial(tabla):
     pos_y : float = pd.to_numeric(tabla["Y"], errors="coerce")
-    return 9.81 * 0.62 * pos_y
+    gravedad = np.mean(tabla["accelerationY"].iloc[2:])
+    print(gravedad)
+    return -gravedad * 0.62 * pos_y
 
 def generar_datos_energia(tabla):
     tabla_nueva = tabla.copy()
