@@ -68,7 +68,8 @@ def calcular_aceleracion(tabla, columna):
     delta_tiempo = tabla["Time"].diff().fillna(0)
 
     # Evitar la división por cero
-    aceleracion = round(delta_velocidad / delta_tiempo.replace(0, 1), 2)
+    aceleracion = round(delta_velocidad / delta_tiempo.replace(0, 1), 4)
+
     return aceleracion
 
 
@@ -192,8 +193,9 @@ def graficar_posicion_xy(tabla, guardar_grafica=None, mostrar_grafica=None):
     fig, ax = plt.subplots()
 
     # tipo de grafico y variables a usar
-    ax.plot(tabla["X"], tabla["Y"], color="red", label="real")
-    ax.plot(tabla["pos_X_teorica"], tabla["pos_Y_teorica"], color="blue", label="teorica")    # etiquetas
+    ax.scatter(tabla["X"], tabla["Y"], color="red", label="real")
+    ax.plot(tabla["pos_X_teorica"], tabla["pos_Y_teorica"], color="blue", label="teorica")
+    ax.legend()
     plt.xlabel('posicion en el eje X (m)')
     plt.ylabel('posicion en el eje Y (m)')
     # titulo
@@ -218,6 +220,8 @@ def agregar_datos_movimiento(tabla):
     tabla_nueva["velocityX"] = calcular_velocidad(tabla_nueva, "X")
     tabla_nueva["velocityY"] = calcular_velocidad(tabla_nueva, "Y")
     tabla_nueva["accelerationY"] = calcular_aceleracion(tabla_nueva, "Y")
+
+    tabla_nueva.loc[1, "accelerationY"] = 0
 
     return tabla_nueva
 
@@ -335,12 +339,12 @@ def generar_datos_y_teorica(tabla):
 def energia_cinetica(tabla):
     velocidad_x : float = pd.to_numeric(tabla["velocityX"], errors="coerce")
     velocidad_y : float = pd.to_numeric(tabla["velocityY"], errors="coerce")
-
     return 0.5 * 0.62 * ((np.sqrt(velocidad_x** 2 + velocidad_y ** 2)) ** 2)
 
 def energia_potencial(tabla):
     pos_y : float = pd.to_numeric(tabla["Y"], errors="coerce")
-    gravedad = np.abs(np.mean(tabla["accelerationY"].iloc[2:]))
+    gravedad = np.abs(np.mean(tabla["accelerationY"].iloc[3:]))
+    print('Gravedad promedio: ' + str(round(gravedad, 2)))
     return gravedad * 0.62 * pos_y
 
 def generar_datos_energia(tabla):
