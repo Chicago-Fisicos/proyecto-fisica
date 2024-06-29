@@ -414,17 +414,12 @@ def ajustar_etiquetas_tiempo(ax, tiempo, num_labels):
 
 
 def post_procesamiento(tabla):
-    energia_df = tabla[["Time", "Energia_cinetica", "Energia_potencial", "Energia_mecanica"]]
-    teorico_df = tabla[["Time", "pos_X_teorica", "pos_Y_teorica", "vel_X_teorica", "vel_Y_teorica", "acc_Y_teorica"]]
-    practico_df = tabla[["Time", "X", "Y", "velocityX", "velocityY", "accelerationY"]]
+    tabla_practico = tabla[["Time", "X", "Y", "velocityX", "velocityY", "accelerationY",
+                         "Energia_cinetica", "Energia_potencial", "Energia_mecanica"]]
+    tabla_teorico = tabla[['Time', 'pos_X_teorica', 'pos_Y_teorica', 'vel_X_teorica', 'vel_Y_teorica', 'acc_Y_teorica']]
 
-    energia_file = "tablas/tabla-moviento-metros-energia.csv"
-    teorico_file = "tablas/tabla-moviento-metros-teorico.csv"
-    practico_file = "tablas/tabla-moviento-metros-practico.csv"
-
-    energia_df.to_csv(energia_file, index=False)
-    teorico_df.to_csv(teorico_file, index=False)
-    practico_df.to_csv(practico_file, index=False)
+    tabla_practico.to_csv("tablas/tabla-moviento-metros-practico.csv", index=False)
+    tabla_teorico.to_csv("tablas/tabla-moviento-metros-teorico.csv", index=False)
 
 
 
