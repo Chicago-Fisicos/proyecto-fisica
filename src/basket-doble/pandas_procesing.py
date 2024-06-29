@@ -103,6 +103,9 @@ def graficar_velocidad_tiempo(tabla, coordenada, guardar_grafica=None, mostrar_g
     # titulo
     plt.title('velocidad en '+coordenada+' en el tiempo')
 
+
+    ajustar_etiquetas_tiempo(ax, tabla["Time"], 5)
+
     if (limy1  and limy2):
         plt.ylim(limy1, limy2)
     if guardar_grafica:
@@ -138,6 +141,7 @@ def graficar_posicion_tiempo(tabla, coordenada, guardar_grafica=None, mostrar_gr
     # titulo
     plt.title('posicion en '+coordenada+' en el tiempo')
 
+    ajustar_etiquetas_tiempo(ax, tabla["Time"], 5)
 
     if guardar_grafica:
         plt.savefig(RUTA_CARPETA_IMAGENES + "posicion_tiempo_" + coordenada + ".png")
@@ -173,6 +177,7 @@ def graficar_aceleracion_tiempo(tabla, coordenada, guardar_grafica=None, mostrar
     # titulo
     plt.title('aceleracion en '+coordenada+' en el tiempo')
     plt.ylim(-11, -8)
+    ajustar_etiquetas_tiempo(ax, tabla["Time"], 5)
     if guardar_grafica:
         plt.savefig(RUTA_CARPETA_IMAGENES + "aceleracion_tiempo_" + coordenada + ".png")
     if mostrar_grafica:
@@ -317,6 +322,9 @@ def generar_datos_x_teorica(tabla):
     tiempo = tabla_nueva["Time"]-tabla_nueva["Time"].iloc[0]
     tabla_nueva["pos_X_teorica"] = calcular_posicion_x(x_inicial, v_inicial, tiempo)
     tabla_nueva["vel_X_teorica"] = v_inicial
+
+    tabla_nueva.at[0, "vel_X_teorica"] = 0
+
     return tabla_nueva
 
 
@@ -333,6 +341,8 @@ def generar_datos_y_teorica(tabla):
     tabla_nueva["pos_Y_teorica"] = calcular_posicion_y(y_inicial, v_inicial, tiempo)
     tabla_nueva["vel_Y_teorica"] = calcular_velocidad_y(v_inicial, tiempo)
     tabla_nueva["acc_Y_teorica"] = -9.81
+
+    tabla_nueva.at[0, "vel_Y_teorica"] = 0
 
     return tabla_nueva
 
@@ -368,8 +378,12 @@ def graficar_energia(tabla,guardar_grafica=None, mostrar_grafica=None):
     ax.plot(tiempo, cinetica, color="blue", label="Energía cinética")
     ax.plot(tiempo, potencial, color="red", label="Energía potencial")
     ax.plot(tiempo, mecanica, color="green", label="Energía mecánica")
-    ax.axhline(y=mecanica_teorica, color="purple", label="Energía mecánica teórica")
+    #ax.axhline(y=mecanica_teorica, color="purple", label="Energía mecánica teórica")
+    # Añadir una línea horizontal que comienza desde el primer valor de Time
+    ax.plot([tiempo.iloc[0], tiempo.iloc[-1]], [mecanica_teorica, mecanica_teorica], color="purple",
+            label="Energía mecánica teórica")
 
+    ajustar_etiquetas_tiempo(ax, tabla["Time"], 5)
     ax.legend()
 
     plt.xlabel("Tiempo (s)")
@@ -382,6 +396,36 @@ def graficar_energia(tabla,guardar_grafica=None, mostrar_grafica=None):
         plt.show()
     if guardar_grafica:
         fig.savefig(RUTA_CARPETA_IMAGENES + "energia_mecanica.png")
+
+
+def ajustar_etiquetas_tiempo(ax, tiempo, num_labels):
+    # Obtener el rango total del tiempo
+    min_time = tiempo.iloc[0]
+    max_time = tiempo.iloc[-1]
+
+    # Calcular los valores de los ticks del eje X
+    xticks = np.linspace(min_time, max_time, num_labels)
+
+    # Establecer los ticks del eje X
+    ax.set_xticks(xticks)
+
+    # Formatear las etiquetas para que tengan tres decimales
+    ax.set_xticklabels([f"{tick:.3f}" for tick in xticks])
+
+
+def post_procesamiento(tabla):
+    energia_df = tabla[["Time", "Energia_cinetica", "Energia_potencial", "Energia_mecanica"]]
+    teorico_df = tabla[["Time", "pos_X_teorica", "pos_Y_teorica", "vel_X_teorica", "vel_Y_teorica", "acc_Y_teorica"]]
+    practico_df = tabla[["Time", "X", "Y", "velocityX", "velocityY", "accelerationY"]]
+
+    energia_file = "tablas/tabla-moviento-metros-energia.csv"
+    teorico_file = "tablas/tabla-moviento-metros-teorico.csv"
+    practico_file = "tablas/tabla-moviento-metros-practico.csv"
+
+    energia_df.to_csv(energia_file, index=False)
+    teorico_df.to_csv(teorico_file, index=False)
+    practico_df.to_csv(practico_file, index=False)
+
 
 
 def main():
@@ -410,6 +454,7 @@ def main():
     tabla_movimiento = tabla_movimiento.round(6)
     tabla_movimiento.to_csv(RUTA_OUTPUT_CSV, index=False)
 
+    post_procesamiento(tabla_movimiento)
 if __name__ == "__main__":
     main()
 
