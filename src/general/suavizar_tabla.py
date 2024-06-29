@@ -115,7 +115,7 @@ def graficar(csv_original, csv_suavizado, nombre_archivo="grafico.png", titulo="
     plt.figure(figsize=(10, 6))
 
     # Graficar los datos del segundo archivo
-    plt.plot(df2['X'], df2['Y'], label='Suavizado', color='red', linestyle='-', linewidth=1)
+    plt.plot(df2['X'], df2['Y'], label='Ajuste curve fit', color='red', linestyle='-', linewidth=1)
 
     # Graficar los datos del primer archivo
     plt.plot(df1['X'], df1['Y'], label='Original', color='blue', linestyle='-', linewidth=1)

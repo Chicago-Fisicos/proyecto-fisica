@@ -167,11 +167,12 @@ def process_video():
              TRACKEO_SUAVIZADO_CURVE_FIT_NUEVO_ORIGEN,
              NOMBRE_GRAFICO_CURVE_FIT,
              "Grafico de datos originales y ajustados con Curve fit")
+    '''
     graficar(TRACKEO_ORIGINAL_NUEVO_ORIGEN,
              TRACKEO_SUAVIZADO_SAVITZKY_NUEVO_ORIGEN,
              NOMBRE_GRAFICO_SAVITZKY,
              "Grafico de datos originales y suavizados con Savitzky Golay")
-
+    '''
     # Release video resources
     out.release()
     cap.release()
