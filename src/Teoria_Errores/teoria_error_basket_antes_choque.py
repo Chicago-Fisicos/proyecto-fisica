@@ -4,12 +4,12 @@ import numpy as np
 import pandas
 import pandas as pd
 
-PATH_ERROR_C_CURVE_FIT = '../basket-doble/tablas/error_segun_curve_fit.csv'
+PATH_ERROR_C_CURVE_FIT = '../pelotas-chocando/tablas/error_curve_fit_basket_antes.csv'
 # calculada con curve fit pero en metros
-PATH_TABLA_MOV_METROS = '../basket-doble/tablas/tabla-moviento-metros.csv'
-CANT_FRAMES = 29.5235
+PATH_TABLA_MOV_METROS = '../pelotas-chocando/tablas/tabla-moviento-metros-basket-antes-de-choque.csv'
+CANT_FRAMES = 60
 MEASUREMENT_ERROR_METROS = 0.01
-PIXEL_METROS = 0.00447
+PIXEL_METROS = 0.00491
 
 def calculate_time_error():
     return 1 / CANT_FRAMES
@@ -163,7 +163,7 @@ def main():
     tabla_de_Errores['Gravedad Error'] = error_gravedad
     tabla_de_Errores['Gravedad Promedio + Error'] = g_prom + error_gravedad
     tabla_de_Errores['Gravedad Promedio - Error'] = g_prom - error_gravedad
-    tabla_de_Errores.round(2).to_csv('Tabla_de_Errores_Tiro_Doble.csv',index=False)
+    tabla_de_Errores.round(2).to_csv('Tabla_de_Errores_basket_antes_choque.csv',index=False)
 
 if __name__ == "__main__":
     main()
