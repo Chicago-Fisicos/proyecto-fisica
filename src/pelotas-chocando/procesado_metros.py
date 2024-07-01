@@ -19,12 +19,13 @@ RUTA_CSV_BASKET_DESPUES = "tablas/trackeo-basket-despues-de-choque.csv"
 RUTA_CSV_TENIS_ANTES = "tablas/trackeo-tenis-antes-de-choque.csv"
 RUTA_CSV_TENIS_DESPUES = "tablas/trackeo-tenis-despues-de-choque.csv"
 
+
 RUTA_OUTPUT_CSV_BASKET_ANTES = "tablas/tabla-moviento-metros-basket-antes-de-choque.csv"
 RUTA_OUTPUT_CSV_BASKET_DESPUES = "tablas/tabla-moviento-metros-basket-despues-de-choque.csv"
 RUTA_OUTPUT_CSV_TENIS_ANTES = "tablas/tabla-moviento-metros-tenis-antes-de-choque.csv"
 RUTA_OUTPUT_CSV_TENIS_DESPUES = "tablas/tabla-moviento-metros-tenis-despues-de-choque.csv"
 
-pandas_procesing.VALOR_PIXEL_METRO = 0.491 / 100
+pandas_procesing.VALOR_PIXEL_METRO = 0.441 / 100
 
 if __name__ == "__main__":
 
