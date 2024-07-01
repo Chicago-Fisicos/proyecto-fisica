@@ -1,7 +1,6 @@
 import csv
 import os
 import numpy as np
-import pandas
 import pandas as pd
 
 PATH_ERROR_C_CURVE_FIT = '../basket-doble/tablas/error_segun_curve_fit.csv'

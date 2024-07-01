@@ -1,15 +1,17 @@
 import csv
 import os
 import numpy as np
-import pandas
 import pandas as pd
 
 PATH_ERROR_C_CURVE_FIT = '../pelotas-chocando/tablas/error_curve_fit_tenis_antes.csv'
 # calculada con curve fit pero en metros
 PATH_TABLA_MOV_METROS = '../pelotas-chocando/tablas/tabla-moviento-metros-tenis-antes-de-choque.csv'
-CANT_FRAMES = 60
+CANT_FRAMES = 58.85167464114833
 MEASUREMENT_ERROR_METROS = 0.01
 PIXEL_METROS = 0.00491
+MASA_PELOTA_BASQUET = 0.62
+MASA_PELOTA_TENIS = 0.06
+ERROR_BALANZA = 0.005
 
 def calculate_time_error():
     return 1 / CANT_FRAMES
@@ -103,6 +105,18 @@ def calculate_g_prom ():
     g_prom = np.abs(np.mean(acceleration))
     return g_prom
 
+def calculate_v_prom ():
+    # Leer los datos del archivo CSV
+    data = pd.read_csv(PATH_TABLA_MOV_METROS)
+
+    # Extraer de las columnas
+    vx = data['velocityX'].iloc[3:]
+    vy = data['velocityY'].iloc[3:]
+    vx_prom = np.mean(vx)
+    vy_prom = np.mean(vy)
+    v_prom = np.sqrt( vx_prom**2 + vy_prom**2)
+    return v_prom
+
 def calculate_error_velocidad_y(Xf,Xi,Tf, Ti, g_prom, error_x, error_g, error_t):
     # Vy =  (d/t) + (g*(1/2)*(t))
     t= Tf-Ti
@@ -115,6 +129,31 @@ def calculate_error_velocidad_y(Xf,Xi,Tf, Ti, g_prom, error_x, error_g, error_t)
     error_velocidad_y = np.sqrt((derivada_Vy_d ** 2) * (error_x ** 2) + (derivada_Vy_g ** 2) * (error_g ** 2) + (derivada_Vy_t ** 2) * (error_t ** 2) )
     return error_velocidad_y
 
+def calculate_error_energia_cinetica (v_prom, error_vx):
+    #energia_cinetica = 1/2*m*(v**2)
+    derivada_ec_m = 0.5 * v_prom ** 2
+    derivada_ec_v = 1.0 * MASA_PELOTA_TENIS * v_prom
+    error_energia_cinetica = np.sqrt( (derivada_ec_m**2) * (ERROR_BALANZA**2) + (derivada_ec_v**2) * (error_vx**2) )
+
+    return error_energia_cinetica
+
+def calculate_error_energia_potencial (g_prom, error_g):
+    #energia_potencial = m*g*h
+
+    # Leer los datos del archivo CSV
+    data = pd.read_csv(PATH_TABLA_MOV_METROS)
+
+    # Extraer de las columnas
+    Yf = data['Y'].iloc[-1]
+    Yi = data['Y'].iloc[1]
+    h = Yf - Yi
+    error_h = 0.010953
+    derivada_ep_m = g_prom * h
+    derivada_ep_g = h * MASA_PELOTA_TENIS
+    derivada_ep_h = g_prom * MASA_PELOTA_TENIS
+
+    error_energia_potencial = np.sqrt((derivada_ep_m ** 2) * (ERROR_BALANZA ** 2) + (derivada_ep_g ** 2) * (error_g ** 2) + (derivada_ep_h ** 2) * (error_h ** 2) )
+    return error_energia_potencial
 
 def main():
     # Calculate_time_error
@@ -156,6 +195,18 @@ def main():
     # calculate error in velocity_y
     error_velocidad_y = calculate_error_velocidad_y(Xf, Xi, Tf, Ti, g_prom, error_x, error_gravedad, error_time)
     print(f'El error de Vy es: {error_velocidad_y}')
+
+    # calculate velocidad promedio
+    v_prom = calculate_v_prom()
+    print(f'La velocidad promedio es: {v_prom}')
+
+    # calculate error in ec
+    error_energia_cinetica = calculate_error_energia_cinetica (v_prom, error_Vx)
+    print(f'El error de Energia Cinetica es: {error_energia_cinetica}')
+
+    # calculate error in ep
+    error_energia_potencial = calculate_error_energia_potencial(g_prom, error_gravedad)
+    print(f'El error de Energia Potencial es: {error_energia_potencial}')
 
     #Generar tabla
 
