@@ -192,10 +192,10 @@ def main():
     tabla_de_Errores.round(2).to_csv('Tabla_de_Errores_Tiro_Doble.csv',index=False)
 
     # Generate plots
-    plot_error_gravity(g_prom, error_gravedad)
-    plot_error_velocity_x(Vx, error_Vx)
-    Vy = (Xf - Xi) / (Tf - Ti) + g_prom * 0.5 * (Tf - Ti)
-    plot_error_velocity_y(Vy, error_velocidad_y)
+    #plot_error_gravity(g_prom, error_gravedad)
+    #plot_error_velocity_x(Vx, error_Vx)
+    #Vy = (Xf - Xi) / (Tf - Ti) + g_prom * 0.5 * (Tf - Ti)
+    #plot_error_velocity_y(Vy, error_velocidad_y)
 
 if __name__ == "__main__":
     main()
