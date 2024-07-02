@@ -101,11 +101,9 @@ def main():
     print(f'Delta x: {delta_x}')
     print(f'Fy: {Fy}')
     print(f'Delta y: {delta_y}')
-    print(f'Delta energía mecánica: {delta_energia_mecanica}')
-    print(f'Fuerza del aire prom: {fuerza_aire_prom}')
-    print(f'Módulo: {modulo}')
     print(f'int_fx_dx: {integral_Fx_dx}')
-
+    print(f'Delta energía mecánica: {delta_energia_mecanica}')
+    print(f'Módulo de fuerzas: {modulo}')
 
 if __name__ == "__main__":
     main()
