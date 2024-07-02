@@ -1,14 +1,14 @@
+from logging import error
 import numpy as np
 import matplotlib.pyplot as plt
 from scipy.signal import find_peaks
 import wave
 
-VELOCIDAD_ANTERIOR_REBOTE_INICIAL = 2.42487
-
 
 def main(ruta_archivo, ruta_archivo_csv, ruta_grafico):
     # Cargar el archivo de audio
     audio, tasa_muestreo = cargar_audio(ruta_archivo)
+    print(f'La tasa de muestreo del audio es: {tasa_muestreo}')
 
     # Obtener el envolvente del audio para detectar los picos
     envolvente = np.abs(audio)
@@ -55,26 +55,24 @@ def graficar(audio, envolvente, picos, tasa_muestreo, tiempos, ruta_grafico):
 def coeficiente_de_restitucion(tiempos):
     rebotes = len(tiempos)
     coeficientes = []
-    v_antes_rebote = []
-    v_antes_rebote.append(VELOCIDAD_ANTERIOR_REBOTE_INICIAL)
     v_despues_rebote = []
-    for i in range(1, rebotes):
+    for i in range(rebotes):
         t1 = tiempos[i - 1]
         t2 = tiempos[i]
-        v_antes_rebote.append(9.81 * (t2 - (t2/2)))
-        v_despues_rebote.append(9.81 * ((t2/2) - t1))
+        v_despues_rebote.append(9.81 * ((t2 - t1)/2))
 
-    for i in range(1, rebotes-1):
-        coef = v_despues_rebote[i] / v_antes_rebote[i]
+    for i in range(1, len(v_despues_rebote)):
+        coef = - ( -v_despues_rebote[i] / v_despues_rebote[i-1])
         coeficientes.append(coef)
     # Promedio del coeficiente de restitución
 
-    coeficientes.pop(0)
+    coeficientes = coeficientes[1:]
     coef_restitucion_promedio = np.mean(coeficientes)
+    error_e = np.std(coeficientes)
     print(f'coeficientes: {coeficientes}')
     print(f'Número de rebotes detectados: {rebotes}')
     print(f'Coeficiente de restitución promedio: {coef_restitucion_promedio:.4f}')
-
+    print(f'desvio de coeficiente: {error_e}')
 
 if __name__ == "__main__":
     ruta_audio = 'videos-y-audios/input.wav'
