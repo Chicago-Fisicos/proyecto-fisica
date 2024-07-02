@@ -376,7 +376,7 @@ def graficar_energia(tabla,guardar_grafica=None, mostrar_grafica=None):
     mecanica_teorica = 13.6756
 
     ax.plot(tiempo, cinetica, color="blue", label="Energía cinética")
-    ax.plot(tiempo, potencial, color="red", label="Energía potencial")
+    ax.plot(tiempo, potencial, color="red", label="Energía potencial gravitatoria")
     ax.plot(tiempo, mecanica, color="green", label="Energía mecánica")
     #ax.axhline(y=mecanica_teorica, color="purple", label="Energía mecánica teórica")
     # Añadir una línea horizontal que comienza desde el primer valor de Time
