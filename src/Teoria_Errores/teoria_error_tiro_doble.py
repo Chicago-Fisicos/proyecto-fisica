@@ -2,6 +2,7 @@ import csv
 import os
 import numpy as np
 import pandas as pd
+from matplotlib import pyplot as plt
 
 PATH_ERROR_C_CURVE_FIT = '../basket-doble/tablas/error_segun_curve_fit.csv'
 # calculada con curve fit pero en metros
@@ -114,6 +115,32 @@ def calculate_error_velocidad_y(Xf,Xi,Tf, Ti, g_prom, error_x, error_g, error_t)
     error_velocidad_y = np.sqrt((derivada_Vy_d ** 2) * (error_x ** 2) + (derivada_Vy_g ** 2) * (error_g ** 2) + (derivada_Vy_t ** 2) * (error_t ** 2) )
     return error_velocidad_y
 
+def plot_error_gravity(g_prom, error_gravedad):
+    plt.errorbar([0], [g_prom], yerr=[error_gravedad], fmt='o', label='Gravedad con error')
+    plt.xlabel('Index')
+    plt.ylabel('Gravedad (m/s^2)')
+    plt.title('Gravedad con su error')
+    plt.legend()
+    plt.grid(True)
+    plt.show()
+
+def plot_error_velocity_x(Vx, error_Vx):
+    plt.errorbar([0], [Vx], yerr=[error_Vx], fmt='o', label='Velocidad en X con error')
+    plt.xlabel('Index')
+    plt.ylabel('Velocidad en X (m/s)')
+    plt.title('Velocidad en X con su error')
+    plt.legend()
+    plt.grid(True)
+    plt.show()
+
+def plot_error_velocity_y(Vy, error_Vy):
+    plt.errorbar([0], [Vy], yerr=[error_Vy], fmt='o', label='Velocidad en Y con error')
+    plt.xlabel('Index')
+    plt.ylabel('Velocidad en Y (m/s)')
+    plt.title('Velocidad en Y con su error')
+    plt.legend()
+    plt.grid(True)
+    plt.show()
 
 def main():
     # Calculate_time_error
@@ -163,6 +190,12 @@ def main():
     tabla_de_Errores['Gravedad Promedio + Error'] = g_prom + error_gravedad
     tabla_de_Errores['Gravedad Promedio - Error'] = g_prom - error_gravedad
     tabla_de_Errores.round(2).to_csv('Tabla_de_Errores_Tiro_Doble.csv',index=False)
+
+    # Generate plots
+    plot_error_gravity(g_prom, error_gravedad)
+    plot_error_velocity_x(Vx, error_Vx)
+    Vy = (Xf - Xi) / (Tf - Ti) + g_prom * 0.5 * (Tf - Ti)
+    plot_error_velocity_y(Vy, error_velocidad_y)
 
 if __name__ == "__main__":
     main()

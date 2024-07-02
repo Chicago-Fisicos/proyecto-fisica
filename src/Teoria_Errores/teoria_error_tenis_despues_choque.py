@@ -2,6 +2,7 @@ import csv
 import os
 import numpy as np
 import pandas as pd
+from matplotlib import pyplot as plt
 
 PATH_ERROR_C_CURVE_FIT = '../pelotas-chocando/tablas/error_curve_fit_tenis_despues.csv'
 # calculada con curve fit pero en metros
@@ -137,16 +138,9 @@ def calculate_error_energia_cinetica (v_prom, error_vx):
 
     return error_energia_cinetica
 
-def calculate_error_energia_potencial (g_prom, error_g):
+def calculate_error_energia_potencial (g_prom, error_g, h):
     #energia_potencial = m*g*h
 
-    # Leer los datos del archivo CSV
-    data = pd.read_csv(PATH_TABLA_MOV_METROS)
-
-    # Extraer de las columnas
-    Yf = data['Y'].iloc[-1]
-    Yi = data['Y'].iloc[1]
-    h = Yf - Yi
     error_h = 0.010953
     derivada_ep_m = g_prom * h
     derivada_ep_g = h * MASA_PELOTA_TENIS
@@ -205,16 +199,56 @@ def main():
     print(f'El error de Energia Cinetica es: {error_energia_cinetica}')
 
     # calculate error in ep
-    error_energia_potencial = calculate_error_energia_potencial(g_prom, error_gravedad)
-    print(f'El error de Energia Potencial es: {error_energia_potencial}')
+    # error_energia_potencial = calculate_error_energia_potencial(g_prom, error_gravedad)
+    # print(f'El error de Energia Potencial es: {error_energia_potencial}')
 
-    #Generar tabla
+    data = pd.read_csv(PATH_TABLA_MOV_METROS)
+    energias_cineticas = []
+    errores_energia_cinetica = []
+    energias_potenciales = []
+    errores_energia_potencial = []
+
+    for i in range(1, len(data)):
+        vx = data['velocityX'].iloc[i]
+        vy = data['velocityY'].iloc[i]
+        v = np.sqrt(vx ** 2 + vy ** 2)
+        energia_cinetica = 0.5 * MASA_PELOTA_BASQUET * (v ** 2)
+        error_ec = calculate_error_energia_cinetica(v, error_Vx)
+
+        y = data['Y'].iloc[i]
+        h = y - data['Y'].iloc[0]
+        energia_potencial = MASA_PELOTA_BASQUET * g_prom * h
+        error_ep = calculate_error_energia_potencial(g_prom, error_gravedad, h)
+
+        energias_cineticas.append(energia_cinetica)
+        errores_energia_cinetica.append(error_ec)
+        energias_potenciales.append(energia_potencial)
+        errores_energia_potencial.append(error_ep)
+
+    plt.figure(figsize=(10, 6))
+    time = data['Time'].iloc[1:]
+
+    plt.errorbar(time, energias_cineticas, yerr=errores_energia_cinetica, label='Energía Cinética', fmt='-o')
+    plt.errorbar(time, energias_potenciales, yerr=errores_energia_potencial, label='Energía Potencial', fmt='-o')
+
+    plt.xlabel('Tiempo (s)')
+    plt.ylabel('Energía (J)')
+    plt.title('Energía Cinética y Potencial - Tenis después del Choque')
+    plt.legend()
+    plt.grid(True)
+
+    # Guardar el gráfico
+    plt.savefig('energias_cinetica_potencial_tenis_despues.png')
+
+    plt.show()
 
     tabla_de_Errores = pd.DataFrame({'Gravedad Promedio': [g_prom]})
     tabla_de_Errores['Gravedad Error'] = error_gravedad
     tabla_de_Errores['Gravedad Promedio + Error'] = g_prom + error_gravedad
     tabla_de_Errores['Gravedad Promedio - Error'] = g_prom - error_gravedad
-    tabla_de_Errores.round(2).to_csv('Tabla_de_Errores_tenis_despues_choque.csv',index=False)
+    tabla_de_Errores.round(2).to_csv('Tabla_de_Errores_tenis_despues_choque.csv', index=False)
+
+
 
 if __name__ == "__main__":
     main()
