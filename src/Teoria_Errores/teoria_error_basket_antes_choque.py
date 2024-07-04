@@ -94,8 +94,12 @@ def extraer_datos ():
     Tf = data['Time'].iloc[-1]
     Ti = data['Time'].iloc[1]
     Vx = data['velocityX'].iloc[1]
+    Vy = data['velocityY'].iloc[1]
+    g = data['accelerationY'].iloc[1]
+    y = data['Y'].iloc[1]
+    y2 = data['Y'].iloc[2]
 
-    return Xf,Xi,Tf,Ti,Vx
+    return Xf,Xi,Tf,Ti,Vx,Vy,g,y,y2
 
 def calculate_g_prom ():
     # Leer los datos del archivo CSV
@@ -130,29 +134,35 @@ def calculate_error_velocidad_y(Xf,Xi,Tf, Ti, g_prom, error_x, error_g, error_t)
     error_velocidad_y = np.sqrt((derivada_Vy_d ** 2) * (error_x ** 2) + (derivada_Vy_g ** 2) * (error_g ** 2) + (derivada_Vy_t ** 2) * (error_t ** 2) )
     return error_velocidad_y
 
-def calculate_error_energia_cinetica (v_prom, error_vx):
+def error_calculate_energia_cinetica (v, error_vx):
     #energia_cinetica = 1/2*m*(v**2)
-    derivada_ec_m = 0.5 * v_prom ** 2
-    derivada_ec_v = 1.0 * MASA_PELOTA_BASQUET * v_prom
+    derivada_ec_m = 0.5 * v ** 2
+    derivada_ec_v = 1.0 * MASA_PELOTA_BASQUET * v
     error_energia_cinetica = np.sqrt( (derivada_ec_m**2) * (ERROR_BALANZA**2) + (derivada_ec_v**2) * (error_vx**2) )
 
     return error_energia_cinetica
 
-def calculate_error_energia_potencial (g_prom, error_g, h):
+def error_calculate_energia_potencial (g, error_g, h):
     #energia_potencial = m*g*h
 
     # Leer los datos del archivo CSV
     data = pd.read_csv(PATH_TABLA_MOV_METROS)
 
     error_h = 0.010953
-    derivada_ep_m = g_prom * h
+    derivada_ep_m = g * h
     derivada_ep_g = h * MASA_PELOTA_BASQUET
-    derivada_ep_h = g_prom * MASA_PELOTA_BASQUET
+    derivada_ep_h = g * MASA_PELOTA_BASQUET
 
     error_energia_potencial = np.sqrt((derivada_ep_m ** 2) * (ERROR_BALANZA ** 2) + (derivada_ep_g ** 2) * (error_g ** 2) + (derivada_ep_h ** 2) * (error_h ** 2) )
     return error_energia_potencial
 
+def calculate_v (Vx,Vy) :
+    v = np.sqrt(Vx**2 + Vy**2)
+    return v
+
 def main():
+    print(f' BASQUET ANTES DEL CHOQUE')
+
     # Calculate_time_error
     error_time = calculate_time_error()
     print(f'El error del tiempo es: {error_time}')
@@ -166,12 +176,16 @@ def main():
     print(f'El error de X es: {error_x}')
 
     # data
-    Xf, Xi, Tf, Ti, Vx = extraer_datos()
+    Xf, Xi, Tf, Ti, Vx, Vy, g, y, y2 = extraer_datos()
     print(f'Xf es: {Xf}')
     print(f'Xi es: {Xi}')
     print(f'Tf es: {Tf}')
     print(f'Ti es: {Ti}')
     print(f'Vx es: {Vx}')
+    print(f'Vy es: {Vy}')
+    print(f'g es: {g}')
+    print(f'y es: {y}')
+    print(f'y2 es: {y2}')
 
     # calculate gravity(prom)
     g_prom = calculate_g_prom()
@@ -197,53 +211,18 @@ def main():
     v_prom = calculate_v_prom()
     print(f'La velocidad promedio es: {v_prom}')
 
-    # calculate error in ec
-    error_energia_cinetica = calculate_error_energia_cinetica (v_prom, error_Vx)
+    # calculate v
+    v = calculate_v(Vx, Vy)
+    print(f'La velocidad es: {v}')
+
+    error_energia_cinetica = error_calculate_energia_cinetica (v, error_Vx)
     print(f'El error de Energia Cinetica es: {error_energia_cinetica}')
 
     # calculate error in ep
-    #error_energia_potencial = calculate_error_energia_potencial(g_prom, error_gravedad, h)
-    #print(f'El error de Energia Potencial es: {error_energia_potencial}')
+    h = y2-y
+    error_energia_potencial = error_calculate_energia_potencial(g_prom, error_gravedad, h)
+    print(f'El error de Energia Potencial es: {error_energia_potencial}')
 
-    data = pd.read_csv(PATH_TABLA_MOV_METROS)
-    energias_cineticas = []
-    errores_energia_cinetica = []
-    energias_potenciales = []
-    errores_energia_potencial = []
-
-    for i in range(1,len(data)):
-        vx = data['velocityX'].iloc[i]
-        vy = data['velocityY'].iloc[i]
-        v = np.sqrt(vx ** 2 + vy ** 2)
-        energia_cinetica = 0.5 * MASA_PELOTA_BASQUET * (v ** 2)
-        error_ec = calculate_error_energia_cinetica(v, error_Vx)
-
-        y = data['Y'].iloc[i]
-        h = y - data['Y'].iloc[0]
-        energia_potencial = MASA_PELOTA_BASQUET * g_prom * h
-        error_ep = calculate_error_energia_potencial(g_prom, error_gravedad, h)
-
-        energias_cineticas.append(energia_cinetica)
-        errores_energia_cinetica.append(error_ec)
-        energias_potenciales.append(energia_potencial)
-        errores_energia_potencial.append(error_ep)
-
-    plt.figure(figsize=(10, 6))
-    time = data['Time'].iloc[1:]
-
-    plt.errorbar(time, energias_cineticas, yerr=errores_energia_cinetica, label='Energía Cinética', fmt='-o')
-    plt.errorbar(time, energias_potenciales, yerr=errores_energia_potencial, label='Energía Potencial', fmt='-o')
-
-    plt.xlabel('Tiempo (s)')
-    plt.ylabel('Energía (J)')
-    plt.title('Energía Cinética y Potencial - Basquet antes del Choque')
-    plt.legend()
-    plt.grid(True)
-
-    # Guardar el gráfico
-    plt.savefig('energias_cinetica_potencial_basquet_antes.png')
-
-    plt.show()
 
     tabla_de_Errores = pd.DataFrame({'Gravedad Promedio': [g_prom]})
     tabla_de_Errores['Gravedad Error'] = error_gravedad
