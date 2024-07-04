@@ -1,8 +1,12 @@
 import csv
+import math
 import os
+from math import floor, log10, ceil
+
 import numpy as np
 import pandas as pd
 from matplotlib import pyplot as plt
+from mpmath.libmp import round_up
 
 PATH_ERROR_C_CURVE_FIT = '../basket-doble/tablas/error_segun_curve_fit.csv'
 # calculada con curve fit pero en metros
@@ -11,8 +15,15 @@ CANT_FRAMES = 29.5235
 MEASUREMENT_ERROR_METROS = 0.01
 PIXEL_METROS = 0.00447
 
+def round_to_1(x):
+    if x == 0:
+        return 0
+    magnitude = 10**math.floor(math.log10(abs(x)))
+    return math.ceil(x / magnitude) * magnitude
+
 def calculate_time_error():
-    return 1 / CANT_FRAMES
+    error_time = (1 / CANT_FRAMES)
+    return error_time
 
 def file_exists(file_path):
     return os.path.isfile(file_path)
@@ -145,15 +156,15 @@ def plot_error_velocity_y(Vy, error_Vy):
 def main():
     # Calculate_time_error
     error_time = calculate_time_error()
-    print(f'El error del tiempo es: {error_time}')
+    print(f'El error del tiempo es: {round_to_1(error_time)}')
 
     # Calculate_c_error
     error_c_total = calcular_error_total_c()
-    print(f'El error de C segun curve fit en metros es: {error_c_total}')
+    print(f'El error de C segun curve fit en metros es: {round_to_1(error_c_total)}')
 
     # Calculate_X_error
     error_x = calculate_error_x()
-    print(f'El error de X es: {error_x}')
+    print(f'El error de X es: {round_to_1(error_x)}')
 
     # data
     Xf, Xi, Tf, Ti, Vx = extraer_datos()
@@ -173,15 +184,15 @@ def main():
 
     # Calculate_error_velocity_x
     error_Vx = calculate_error_velocidad_x(Xf, Xi, Tf, Ti)
-    print(f'El error de Vx es: {error_Vx}')
+    print(f'El error de Vx es: {round_to_1(error_Vx)}')
 
     # calculate error gravity
     error_gravedad = calculate_error_gravedad(c_total, error_c_total, Vx, error_Vx)
-    print(f'El error de G es: {error_gravedad}')
+    print(f'El error de G es: {round_to_1(error_gravedad)}')
 
     # calculate error in velocity_y
     error_velocidad_y = calculate_error_velocidad_y(Xf, Xi, Tf, Ti, g_prom, error_x, error_gravedad, error_time)
-    print(f'El error de Vy es: {error_velocidad_y}')
+    print(f'El error de Vy es: {round_to_1(error_velocidad_y)}')
 
     #Generar tabla
 
@@ -190,12 +201,6 @@ def main():
     tabla_de_Errores['Gravedad Promedio + Error'] = g_prom + error_gravedad
     tabla_de_Errores['Gravedad Promedio - Error'] = g_prom - error_gravedad
     tabla_de_Errores.round(2).to_csv('Tabla_de_Errores_Tiro_Doble.csv',index=False)
-
-    # Generate plots
-    #plot_error_gravity(g_prom, error_gravedad)
-    #plot_error_velocity_x(Vx, error_Vx)
-    #Vy = (Xf - Xi) / (Tf - Ti) + g_prom * 0.5 * (Tf - Ti)
-    #plot_error_velocity_y(Vy, error_velocidad_y)
 
 if __name__ == "__main__":
     main()
