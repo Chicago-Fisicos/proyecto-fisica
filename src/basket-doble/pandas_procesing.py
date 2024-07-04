@@ -97,7 +97,7 @@ def graficar_velocidad_tiempo(tabla, coordenada, guardar_grafica=None, mostrar_g
     # tipo de grafico y variables a usar
     fig, ax = plt.subplots()
     ax.plot(tiempo, velocidad_teorica, color="blue", label="teorica")
-    ax.scatter(tiempo, velocidad, color="red", label="real")
+    ax.scatter(tiempo, velocidad, color="red", label="real", s=0.1)
     ax.legend()
     # etiquetas
     plt.xlabel('tiempo (segundos)')
@@ -105,7 +105,7 @@ def graficar_velocidad_tiempo(tabla, coordenada, guardar_grafica=None, mostrar_g
     # titulo
     plt.title('velocidad en ' + coordenada + ' en el tiempo')
 
-    plt.errorbar(tiempo, velocidad, yerr=error, color='red', ecolor='black', elinewidth=0.5, capsize=2)
+    plt.errorbar(tiempo, velocidad, yerr=error, fmt='o', color='red', ecolor='black', elinewidth=0.5, capsize=2)
 
     ajustar_etiquetas_tiempo(ax, tabla["Time"], 5)
 
@@ -165,6 +165,7 @@ def graficar_aceleracion_tiempo(tabla, coordenada, guardar_grafica=None, mostrar
     Returns:
         None
     """
+    error = 0.8
     accCoor = "acceleration" + coordenada
     aceleracion = tabla[accCoor].iloc[2:]
     aceleracion_teorica = tabla["acc_" + coordenada + "_teorica"].iloc[2:]
@@ -172,7 +173,7 @@ def graficar_aceleracion_tiempo(tabla, coordenada, guardar_grafica=None, mostrar
     fig, ax = plt.subplots()
     # tipo de grafico y variables a usar
     ax.plot(tiempo, aceleracion_teorica, color="blue", label="teorica")
-    ax.plot(tiempo, aceleracion, color="red", label="real")
+    ax.scatter(tiempo, aceleracion, color="red", label="real")
     ax.legend()
     # etiquetas
     plt.xlabel('tiempo (segundos)')
@@ -180,6 +181,7 @@ def graficar_aceleracion_tiempo(tabla, coordenada, guardar_grafica=None, mostrar
     # titulo
     plt.title('aceleracion en ' + coordenada + ' en el tiempo')
     plt.ylim(-11, -8)
+    plt.errorbar(tiempo, aceleracion, yerr=error, color='red', ecolor='black', elinewidth=0.5, capsize=2)
     ajustar_etiquetas_tiempo(ax, tabla["Time"], 5)
     if guardar_grafica:
         plt.savefig(RUTA_CARPETA_IMAGENES + "aceleracion_tiempo_" + coordenada + ".png")
