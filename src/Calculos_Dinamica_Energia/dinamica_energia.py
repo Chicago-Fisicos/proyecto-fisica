@@ -1,9 +1,17 @@
+import math
+
 import pandas as pd
 import numpy as np
 
 INPUT = '../basket-doble/tablas/tabla-moviento-metros.csv'
 ERROR_X = 0.010953579323673152 #Calculado el tiro doble teorria de error
 MASA_PELOTA_BASQUET = 0.62
+
+def round_to_1(x):
+    if x == 0:
+        return 0
+    magnitude = 10**math.floor(math.log10(abs(x)))
+    return math.ceil(x / magnitude) * magnitude
 
 def calcular_pendiente_recta_ajustada ():
     # Leer los datos del archivo CSV
@@ -136,8 +144,8 @@ def main():
     print(f'int_fx_dx: {integral_Fx_dx}')
     print(f'Delta energía mecánica: {delta_energia_mecanica}')
     print(f'Módulo de fuerzas: {modulo}')
-    print(f'Error Fx: {error_fx}')
-    print(f'Error Fy: {error_fy}')
+    print(f'Error Fx: {round_to_1(error_fx)}')
+    print(f'Error Fy: {round_to_1(error_fy)}')
 
 if __name__ == "__main__":
     main()
