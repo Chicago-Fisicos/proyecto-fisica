@@ -1,8 +1,8 @@
 import csv
+import math
 import os
 import numpy as np
 import pandas as pd
-from matplotlib import pyplot as plt
 
 PATH_ERROR_C_CURVE_FIT = '../pelotas-chocando/tablas/error_curve_fit_basket_despues.csv'
 # calculada con curve fit pero en metros
@@ -13,6 +13,13 @@ PIXEL_METROS = 0.00441
 MASA_PELOTA_BASQUET = 0.62
 MASA_PELOTA_TENIS = 0.06
 ERROR_BALANZA = 0.005
+
+
+def round_to_1(x):
+    if x == 0:
+        return 0
+    magnitude = 10**math.floor(math.log10(abs(x)))
+    return math.ceil(x / magnitude) * magnitude
 
 def calculate_time_error():
     return 1 / CANT_FRAMES
@@ -157,15 +164,15 @@ def main():
 
     # Calculate_time_error
     error_time = calculate_time_error()
-    print(f'El error del tiempo es: {error_time}')
+    print(f'El error del tiempo es: {round_to_1(error_time)}')
 
     # Calculate_c_error
     error_c_total = calcular_error_total_c()
-    print(f'El error de C segun curve fit en metros es: {error_c_total}')
+    print(f'El error de C segun curve fit en metros es: {round_to_1(error_c_total)}')
 
     # Calculate_X_error
     error_x = calculate_error_x()
-    print(f'El error de X es: {error_x}')
+    print(f'El error de X es: {round_to_1(error_x)}')
 
     # data
     Xf, Xi, Tf, Ti, Vx, Vy, g, y, y2 = extraer_datos()
@@ -189,15 +196,15 @@ def main():
 
     # Calculate_error_velocity_x
     error_Vx = calculate_error_velocidad_x(Xf, Xi, Tf, Ti)
-    print(f'El error de Vx es: {error_Vx}')
+    print(f'El error de Vx es: {round_to_1(error_Vx)}')
 
     # calculate error gravity
     error_gravedad = calculate_error_gravedad(c_total, error_c_total, Vx, error_Vx)
-    print(f'El error de G es: {error_gravedad}')
+    print(f'El error de G es: {round_to_1(error_gravedad)}')
 
     # calculate error in velocity_y
     error_velocidad_y = calculate_error_velocidad_y(Xf, Xi, Tf, Ti, g_prom, error_x, error_gravedad, error_time)
-    print(f'El error de Vy es: {error_velocidad_y}')
+    print(f'El error de Vy es: {round_to_1(error_velocidad_y)}')
 
     # calculate velocidad promedio
     v_prom = calculate_v_prom()
@@ -205,12 +212,12 @@ def main():
 
     # calculate error in ec
     error_energia_cinetica = calculate_error_energia_cinetica (v_prom, error_Vx)
-    print(f'El error de Energia Cinetica es: {error_energia_cinetica}')
+    print(f'El error de Energia Cinetica es: {round_to_1(error_energia_cinetica)}')
 
     # calculate error in ep
     h = y2 - y
     error_energia_potencial = calculate_error_energia_potencial(g_prom, error_gravedad, h)
-    print(f'El error de Energia Potencial es: {error_energia_potencial}')
+    print(f'El error de Energia Potencial es: {round_to_1(error_energia_potencial)}')
 
 
     tabla_de_Errores = pd.DataFrame({'Gravedad Promedio': [g_prom]})
