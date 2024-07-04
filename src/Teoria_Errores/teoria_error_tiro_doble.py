@@ -1,12 +1,10 @@
 import csv
 import math
 import os
-from math import floor, log10, ceil
-
 import numpy as np
 import pandas as pd
 from matplotlib import pyplot as plt
-from mpmath.libmp import round_up
+
 
 PATH_ERROR_C_CURVE_FIT = '../basket-doble/tablas/error_segun_curve_fit.csv'
 # calculada con curve fit pero en metros

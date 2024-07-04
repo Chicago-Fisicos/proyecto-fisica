@@ -117,7 +117,7 @@ def graficar_velocidad_tiempo(tabla, coordenada, guardar_grafica=None, mostrar_g
         plt.show()
 
 
-def graficar_posicion_tiempo(tabla, coordenada, guardar_grafica=None, mostrar_grafica=None):
+def graficar_posicion_tiempo(tabla, coordenada, guardar_grafica=None, mostrar_grafica=None, error=0):
     """
     Genera un gráfico de dispersión de posición contra tiempo para una determinada coordenada en un DataFrame.
 
@@ -146,13 +146,15 @@ def graficar_posicion_tiempo(tabla, coordenada, guardar_grafica=None, mostrar_gr
 
     ajustar_etiquetas_tiempo(ax, tabla["Time"], 5)
 
+    plt.errorbar(tiempo, posicion, yerr=error, fmt='o', color='red', ecolor='black', elinewidth=0.5, capsize=2)
+
     if guardar_grafica:
         plt.savefig(RUTA_CARPETA_IMAGENES + "posicion_tiempo_" + coordenada + ".png")
     if mostrar_grafica:
         plt.show()
 
 
-def graficar_aceleracion_tiempo(tabla, coordenada, guardar_grafica=None, mostrar_grafica=None):
+def graficar_aceleracion_tiempo(tabla, coordenada, guardar_grafica=None, mostrar_grafica=None, error=0):
     """
     Genera un gráfico de aceleración en el tiempo para una coordenada dada en un DataFrame de pandas.
 
@@ -165,7 +167,6 @@ def graficar_aceleracion_tiempo(tabla, coordenada, guardar_grafica=None, mostrar
     Returns:
         None
     """
-    error = 0.8
     accCoor = "acceleration" + coordenada
     aceleracion = tabla[accCoor].iloc[2:]
     aceleracion_teorica = tabla["acc_" + coordenada + "_teorica"].iloc[2:]
@@ -189,7 +190,7 @@ def graficar_aceleracion_tiempo(tabla, coordenada, guardar_grafica=None, mostrar
         plt.show()
 
 
-def graficar_posicion_xy(tabla, guardar_grafica=None, mostrar_grafica=None):
+def graficar_posicion_xy(tabla, guardar_grafica=None, mostrar_grafica=None, error=0):
     """
     Grafica la posición de la nave en el eje X contra el eje Y en un DataFrame de pandas.
 
@@ -211,6 +212,8 @@ def graficar_posicion_xy(tabla, guardar_grafica=None, mostrar_grafica=None):
     plt.ylabel('posicion en el eje Y (m)')
     # titulo
     plt.title('Posicion')
+
+    plt.errorbar(tabla["X"], tabla["Y"], yerr=error, fmt='o', color='red', ecolor='black', elinewidth=0.5, capsize=2)
 
     if guardar_grafica:
         plt.savefig(RUTA_CARPETA_IMAGENES + "posicion_xy.png")
@@ -449,14 +452,14 @@ def main():
     # agregar datos de movimiento a la tabla
     tabla_movimiento = generar_datos_movimiento_metros(tabla_movimiento)
     # graficos de la coordenada x
-    graficar_posicion_tiempo(tabla_movimiento, "X", 1, MOSTRAR_GRAFICOS)
-    graficar_velocidad_tiempo(tabla_movimiento, "X", 1, MOSTRAR_GRAFICOS, 3, 5, 0.2)
+    graficar_posicion_tiempo(tabla_movimiento, "X", 1, MOSTRAR_GRAFICOS, error=0.2)
+    graficar_velocidad_tiempo(tabla_movimiento, "X", 1, MOSTRAR_GRAFICOS, 3, 5, error=0.2)
     # graficos de la coordenada y
-    graficar_posicion_tiempo(tabla_movimiento, "Y", 1, MOSTRAR_GRAFICOS)
+    graficar_posicion_tiempo(tabla_movimiento, "Y", 1, MOSTRAR_GRAFICOS, error=0.2)
     graficar_velocidad_tiempo(tabla_movimiento, "Y", 1, MOSTRAR_GRAFICOS, error=0.4)
-    graficar_aceleracion_tiempo(tabla_movimiento, "Y", 1, MOSTRAR_GRAFICOS)
+    graficar_aceleracion_tiempo(tabla_movimiento, "Y", 1, MOSTRAR_GRAFICOS, error=0.8)
     # graficar posicion de x respecto a y
-    graficar_posicion_xy(tabla_movimiento, 1, MOSTRAR_GRAFICOS)
+    graficar_posicion_xy(tabla_movimiento, 1, MOSTRAR_GRAFICOS, error=0.2)
     # generar datos de energia
     tabla_movimiento = generar_datos_energia(tabla_movimiento)
     # graficar energia
