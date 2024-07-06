@@ -1,21 +1,26 @@
-# Proyecto de Física I
+# Physics I Project
 
-Este proyecto fue desarrollado como parte de la materia Física I, contiene el código para trackear distintas pelotas en Python. 
-El proyecto abarca diversos temas de Física, incluyendo Cinemática, Dinámica, Energía, Choques y Teoría del Error.
+This project was developed as part of the Physics I subject and contains the code for tracking different balls using Python. The project covers several topics in Physics, including Kinematics, Dynamics, Energy, Collisions, and Error Theory.
 
-## Documentación
-El informe pueden verlo [acá](informe.pdf).
-El power point de la presentacion pueden verlo [acá](presentacion.pdf).
 
-## Pagina web
-Hemos creado una pagina web, la cual pueden visitar en cualquiera de los siguientes links:
+## Documentation
+
+You can view our report [here](informe.pdf).
+You can view the presentation [here](presentacion.pdf).
+
+
+## Website
+
+We have created a website, which you can visit at any of the following links:
+
 - https://chicago-fisicos.xyz/
 - https://chicago-fisicos.chewer.net/
 - https://chicago-fisicos.streamlit.app/
+  
+The source code of the website can be found in this [repository](https://github.com/Chicago-Fisicos/homepage).
 
-El código fuente de la página web lo pueden encontra en éste [repositorio](https://github.com/Chicago-Fisicos/homepage).
 
-## Autores
+## Authors
 
 - [@matichewer](https://www.github.com/matichewer)
 - [@Youtek23](https://www.github.com/Youtek23)
@@ -27,3 +32,6 @@ El código fuente de la página web lo pueden encontra en éste [repositorio](ht
 - [@BrendaMartinez103](https://www.github.com/BrendaMartinez103)
 - [@DJVillarroel](https://www.github.com/DJVillarroel)
 - [@95sv](https://www.github.com/95sv)
+
+
+## Screenshots
