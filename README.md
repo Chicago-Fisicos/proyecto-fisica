@@ -2,7 +2,6 @@
 
 This project was developed as part of the Physics 1 subject and contains the code for tracking different balls using Python. 
 The project covers several topics in Physics, including Kinematics, Dynamics, Energy, Collisions, and Error Theory.
-It showcases the work we did for our Physics 1 project, which can be found in [this repository](https://github.com/Chicago-Fisicos/proyecto-fisica/).
 
 
 ## Documentation
