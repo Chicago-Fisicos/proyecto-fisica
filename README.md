@@ -14,3 +14,16 @@ Hemos creado una pagina web, la cual pueden visitar en cualquiera de los siguien
 - https://chicago-fisicos.streamlit.app/
 
 El código fuente de la página web lo pueden encontra en éste [repositorio](https://github.com/Chicago-Fisicos/homepage).
+
+## Autores
+
+- [@matichewer](https://www.github.com/matichewer)
+- [@Youtek23](https://www.github.com/Youtek23)
+- [@yohanakmoyano](https://www.github.com/yohanakmoyano)
+- [@nahueld97](https://www.github.com/nahueld97)
+- [@Luz255181](https://www.github.com/Luz255181)
+- [@Jeremias-Segurado](https://www.github.com/Jeremias-Segurado)
+- [@franflaibani](https://www.github.com/franflaibani)
+- [@BrendaMartinez103](https://www.github.com/BrendaMartinez103)
+- [@DJVillarroel](https://www.github.com/DJVillarroel)
+- [@95sv](https://www.github.com/95sv)
