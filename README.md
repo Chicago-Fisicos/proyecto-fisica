@@ -5,13 +5,12 @@ This project was developed as part of the Physics I subject and contains the cod
 
 ## Documentation
 
-You can view our report [here](informe.pdf).
-You can view the presentation [here](presentacion.pdf).
+The report we created can be viewed [here](informe.pdf). The presentation we prepared can be viewed [here](presentacion.pdf).
 
 
 ## Website
 
-We have created a website, which you can visit at any of the following links:
+A website, created by us, can be accessed through any of the following links:
 
 - https://chicago-fisicos.xyz/
 - https://chicago-fisicos.chewer.net/
