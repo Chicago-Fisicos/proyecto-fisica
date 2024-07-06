@@ -32,6 +32,3 @@ The source code of the website can be found in this [repository](https://github.
 - [@BrendaMartinez103](https://www.github.com/BrendaMartinez103)
 - [@DJVillarroel](https://www.github.com/DJVillarroel)
 - [@95sv](https://www.github.com/95sv)
-
-
-## Screenshots
