@@ -1,7 +1,7 @@
-# Physics 1 Project
+# Física 1 Project
 
-This project was developed as part of the Physics 1 subject and contains the code for tracking different balls using Python. 
-The project covers several topics in Physics, including Kinematics, Dynamics, Energy, Collisions, and Error Theory.
+This project was developed as part of the Física 1 subject and contains the code for tracking different balls using Python. 
+The project covers several topics in physics, including kinematics, dynamics, energy, collisions, and error theory.
 
 
 ## Documentation
